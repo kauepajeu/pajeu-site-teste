@@ -1703,6 +1703,31 @@
       } catch(e) { console.error('Erro ao publicar doc:', e); }
     };
 
+    window.toggleDestaqueDocFirebase = async function(firestoreId, valorAtual) {
+      try {
+        const novoValor = !valorAtual;
+    
+        if (novoValor) {
+          const destacados = (window._docsCache || []).filter(d => d.destaque === true);
+    
+          if (destacados.length >= 3) {
+            alert('Você só pode destacar até 3 documentos na página inicial.');
+            return;
+          }
+        }
+    
+        await updateDoc(doc(db, 'documentos', firestoreId), {
+          destaque: novoValor
+        });
+    
+        await window.carregarERenderDocs();
+        await window.renderAdminListaDocsFirebase();
+    
+      } catch(e) {
+        console.error('Erro ao alterar destaque do documento:', e);
+      }
+    };
+    
     window.excluirDocFirebase = async function(firestoreId) {
       if (!confirm('Retirar este documento do ar?')) return;
       try {
@@ -1738,6 +1763,9 @@
           <div class="admin-post-item">
             <span style="color:var(--creme)">${d.titulo}</span>
             <div class="admin-item-btns">
+              <button class="btn-editar" onclick="toggleDestaqueDocFirebase('${d.firestoreId}', ${d.destaque === true})">
+                ${d.destaque === true ? '★ Destaque' : '☆ Destacar'}
+              </button>
               <button class="btn-editar" onclick="toggleEditarDoc(${i})">Editar</button>
               <button class="btn-excluir" onclick="excluirDocFirebase('${d.firestoreId}')">Retirar do ar</button>
             </div>
