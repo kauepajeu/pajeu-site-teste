@@ -1,1 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nota Política — Pajeú</title>
 
+  <style>
+    @font-face {
+      font-family: 'pajeutitulo';
+      src: url('./fonts/chinese rocks rg.otf') format('opentype');
+    }
+
+    @font-face {
+      font-family: 'pajeutexto';
+      src: url('./fonts/Montserrat-Regular.otf') format('opentype');
+    }
+
+    :root {
+      --bordo: #7a0c0c;
+      --bordo-esc: #4d0707;
+      --ouro: #e8b84b;
+      --creme: #f4ede0;
+      --creme2: #ede3d0;
+      --branco: #fff8f0;
+      --texto: #1a0808;
+
+      --font-display: 'pajeutitulo', sans-serif;
+      --font-body: 'pajeutexto', Georgia, serif;
+      --font-ui: 'pajeutitulo', 'pajeutexto', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--creme);
+      color: var(--texto);
+      font-family: var(--font-body);
+      line-height: 1.8;
+    }
+
+    header {
+      background: var(--bordo-esc);
+      border-bottom: 3px solid var(--ouro);
+      padding: 1.2rem 2rem;
+    }
+
+    header a {
+      color: var(--ouro);
+      text-decoration: none;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .85rem;
+    }
+
+    .nota-container {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 4rem 1.5rem;
+    }
+
+    .nota-categoria {
+      font-family: var(--font-ui);
+      color: var(--bordo);
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      font-size: .75rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      color: var(--bordo-esc);
+      font-size: clamp(2rem, 6vw, 4rem);
+      line-height: 1;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      letter-spacing: .08em;
+    }
+
+    .resumo {
+      color: #5a3030;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .meta {
+      font-family: var(--font-ui);
+      font-size: .75rem;
+      color: #7a5a5a;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      margin-bottom: 2rem;
+    }
+
+    .capa {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      display: block;
+      margin-bottom: 2.5rem;
+    }
+
+    .corpo {
+      font-size: 1rem;
+      line-height: 1.9;
+    }
+
+    .corpo p {
+      margin-bottom: 1rem;
+    }
+
+    .bio {
+      border-top: 1px solid #d8c8b8;
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      font-size: .85rem;
+      color: #5a4040;
+      font-style: italic;
+    }
+
+    .erro {
+      color: var(--bordo);
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    @media (max-width: 680px) {
+      .nota-container {
+        padding: 3rem 1.25rem;
+      }
+
+      header {
+        padding: 1rem 1.25rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="index.html">← Voltar ao site</a>
+  </header>
+
+  <main class="nota-container" id="notaContainer">
+    <p class="erro">Carregando nota...</p>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
+      authDomain: "pajeu-site-teste.firebaseapp.com",
+      projectId: "pajeu-site-teste",
+      storageBucket: "pajeu-site-teste.firebasestorage.app",
+      messagingSenderId: "803113381054",
+      appId: "1:803113381054:web:07e93476b8d129c96082ef",
+      measurementId: "G-9WVNK4CX8E"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const container = document.getElementById("notaContainer");
+
+    function formatarData(dataHora) {
+      if (!dataHora) return "";
+      const data = dataHora.toDate ? dataHora.toDate() : new Date(dataHora);
+      return data.toLocaleDateString("pt-BR");
+    }
+
+    async function carregarNota() {
+      if (!id) {
+        container.innerHTML = '<p class="erro">Nota não encontrada.</p>';
+        return;
+      }
+
+      const ref = doc(db, "notas", id);
+      const snap = await getDoc(ref);
+
+      if (!snap.exists()) {
+        container.innerHTML = '<p class="erro">Nota não encontrada.</p>';
+        return;
+      }
+
+      const nota = snap.data();
+
+      document.title = `${nota.titulo || "Nota Política"} — Pajeú`;
+
+      container.innerHTML = `
+        <span class="nota-categoria">${nota.categoria || "Nota Política"}</span>
+
+        <h1>${nota.titulo || ""}</h1>
+
+        ${nota.resumo ? `<p class="resumo">${nota.resumo}</p>` : ""}
+
+        <div class="meta">
+          ${nota.autor ? `Por ${nota.autor} · ` : ""}
+          ${formatarData(nota.dataHora)}
+        </div>
+
+        ${nota.capa ? `<img src="${nota.capa}" alt="Imagem de capa da nota" class="capa">` : ""}
+
+        <article class="corpo">
+          ${nota.texto || ""}
+        </article>
+
+        ${nota.bio ? `
+          <div class="bio">
+            <strong>${nota.autor || "Autor/a"}</strong><br>
+            ${nota.bio}
+          </div>
+        ` : ""}
+      `;
+    }
+
+    carregarNota();
+  </script>
+</body>
+</html>
