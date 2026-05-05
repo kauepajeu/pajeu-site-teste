@@ -196,6 +196,29 @@
       margin-bottom: 1rem;
     }
 
+    .busca-wrap {
+      margin-bottom: 1.25rem;
+    }
+
+    #buscaNotas {
+      width: 100%;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(232,184,75,.35);
+      color: var(--creme);
+      padding: .75rem .85rem;
+      font-family: var(--font-body);
+      font-size: .9rem;
+    }
+
+    #buscaNotas::placeholder {
+      color: rgba(244,237,224,.65);
+    }
+
+    #buscaNotas:focus {
+      outline: none;
+      border-color: var(--ouro);
+    }
+    
     .cat-btn {
       width: 100%;
       text-align: left;
@@ -268,9 +291,13 @@
       </div>
 
       <aside>
+        <div class="busca-wrap">
+          <input type="search" id="buscaNotas" placeholder="Buscar nota..." />
+        </div>
+
         <h2>Categorias</h2>
-        <div id="categoriasLista"></div>
-      </aside>
+          <div id="categoriasLista"></div>
+        </aside>
     </section>
   </main>
 
