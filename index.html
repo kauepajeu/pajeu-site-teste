@@ -747,7 +747,30 @@
       font-size: .60rem; color: var(--creme2); line-height: 1.4;
       font-family: var(--font-body); letter-spacing: .02em;
     }
-    .nota-card.tem-capa .nota-body { padding: .75rem 1.25rem 1.25rem; display: flex; flex-direction: column; gap: .5rem; }
+    .nota-card.tem-capa {
+      padding: 0;
+      overflow: hidden;
+      border-top: none;
+    }
+
+    .nota-card.tem-capa .nota-body {
+      padding: .85rem 1.25rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .55rem;
+    }
+
+    .nota-card.tem-capa .nota-body .nota-tag {
+      background: transparent;
+      color: var(--bordo);
+      padding: 0;
+      margin: 0;
+    }
+
+    .nota-card.tem-capa .nota-meta {
+      border-top: none;
+      padding-top: 0;
+    }
 
     /* Biografia do autor no modal */
     .modal-bio {
@@ -832,16 +855,16 @@
         margin-right: -1.25rem;
         justify-content: center;
         overflow: hidden;
-        /* altura suficiente para ver a imagem mas cortar na faixa */
         max-height: 280px;
         align-self: flex-end;
       }
+
       .hero-foto {
-        width: 100%;
-        max-width: 100%;
+        width: min(118vw, 520px);
+        max-width: none;
         height: 280px;
         object-fit: cover;
-        object-position: center top;
+        object-position: 45% top;
         transform: none;
         display: block;
         filter: drop-shadow(0 -6px 18px rgba(77,7,7,0.7));
@@ -1929,7 +1952,7 @@
                 </div>
               </div>
               <div class="nota-body">
-                <span class="nota-tag" style="margin-bottom:.75rem">${n.categoria}</span>
+                <span class="nota-tag">${n.categoria}</span>
                 <div class="nota-meta">
                   <span>${n.autor} · ${formatarData(n.data)}</span>
                   <a href="#" class="nota-ler" onclick="event.stopPropagation();abrirNota('${n.firestoreId || n.id}'); return false;">Ler →</a>
