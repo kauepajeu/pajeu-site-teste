@@ -320,7 +320,7 @@
           <div class="doc-bottom">
 
             <span class="doc-data">
-              ${formatarData(doc.data)}
+              ${formatarData(doc.criadoEm || doc.data)}
             </span>
 
             <a
@@ -349,7 +349,7 @@
       try {
 
         const snap = await getDocs(
-          query(collection(db, "documentos"), orderBy("data", "desc"))
+          query(collection(db, "documentos"), orderBy("criadoEm", "desc"))
         );
 
         todosDocs = snap.docs.map(d => ({
