@@ -269,11 +269,6 @@
     const docsGrid = document.getElementById("docsGrid");
     const buscaDocs = document.getElementById("buscaDocs");
 
-    function formatarData(data) {
-      if (!data) return "";
-      return new Date(data).toLocaleDateString("pt-BR");
-    }
-
     function renderDocs() {
 
       const termo = termoBusca.toLowerCase().trim();
@@ -319,10 +314,6 @@
 
           <div class="doc-bottom">
 
-            <span class="doc-data">
-              ${formatarData(doc.criadoEm || doc.data)}
-            </span>
-
             <a
               href="${doc.link}"
               target="_blank"
@@ -349,7 +340,7 @@
       try {
 
         const snap = await getDocs(
-          query(collection(db, "documentos"), orderBy("criadoEm", "desc"))
+          query(collection(db, "documentos"), orderBy("titulo", "asc"))
         );
 
         todosDocs = snap.docs.map(d => ({
