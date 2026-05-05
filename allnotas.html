@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notas Políticas — Pajeú</title>
+
+  <style>
+    @font-face {
+      font-family: 'pajeutitulo';
+      src: url('./fonts/chinese rocks rg.otf') format('opentype');
+    }
+
+    @font-face {
+      font-family: 'pajeutexto';
+      src: url('./fonts/Montserrat-Regular.otf') format('opentype');
+    }
+
+    :root {
+      --bordo: #7a0c0c;
+      --bordo-esc: #4d0707;
+      --ouro: #e8b84b;
+      --ouro-clr: #f5d07a;
+      --creme: #f4ede0;
+      --creme2: #ede3d0;
+      --branco: #fff8f0;
+      --texto: #1a0808;
+
+      --font-display: 'pajeutitulo', sans-serif;
+      --font-body: 'pajeutexto', Georgia, serif;
+      --font-ui: 'pajeutitulo', 'pajeutexto', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--creme);
+      color: var(--texto);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--bordo-esc);
+      border-bottom: 3px solid var(--ouro);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    header a {
+      color: var(--ouro);
+      text-decoration: none;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .85rem;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .topo {
+      margin-bottom: 3rem;
+    }
+
+    .label {
+      font-family: var(--font-ui);
+      color: var(--ouro);
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      font-size: .75rem;
+      margin-bottom: .75rem;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      color: var(--bordo-esc);
+      font-size: clamp(2.5rem, 7vw, 5rem);
+      line-height: .95;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .notas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr));
+      gap: 1.75rem;
+    }
+
+    .nota-card {
+      background: var(--branco);
+      border-top: 4px solid var(--bordo);
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: transform .2s, box-shadow .2s;
+      overflow: hidden;
+    }
+
+    .nota-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(122,12,12,.15);
+    }
+
+    .nota-capa {
+      height: 180px;
+      overflow: hidden;
+      background: var(--bordo);
+      position: relative;
+    }
+
+    .nota-capa img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .nota-body {
+      padding: 1.25rem;
+    }
+
+    .nota-tag {
+      font-family: var(--font-ui);
+      color: var(--bordo);
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-size: .65rem;
+      display: block;
+      margin-bottom: .75rem;
+    }
+
+    .nota-titulo {
+      font-family: var(--font-display);
+      color: var(--bordo-esc);
+      font-size: 1.35rem;
+      line-height: 1.15;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      margin-bottom: .75rem;
+    }
+
+    .nota-resumo {
+      color: #4a2a2a;
+      font-size: .85rem;
+      line-height: 1.65;
+      margin-bottom: 1rem;
+    }
+
+    .nota-meta {
+      font-family: var(--font-ui);
+      color: #7a5a5a;
+      font-size: .72rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      display: flex;
+      justify-content: space-between;
+      gap: .75rem;
+    }
+
+    aside {
+      position: sticky;
+      top: 1.5rem;
+      background: var(--bordo-esc);
+      padding: 1.25rem;
+      border-top: 4px solid var(--ouro);
+    }
+
+    aside h2 {
+      font-family: var(--font-display);
+      color: var(--ouro);
+      font-size: 1.2rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 1rem;
+    }
+
+    .cat-btn {
+      width: 100%;
+      text-align: left;
+      display: block;
+      background: transparent;
+      color: var(--creme);
+      border: 1px solid rgba(232,184,75,.25);
+      padding: .65rem .75rem;
+      margin-bottom: .5rem;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      cursor: pointer;
+      transition: background .2s, color .2s, border-color .2s;
+    }
+
+    .cat-btn:hover,
+    .cat-btn.ativa {
+      background: var(--ouro);
+      color: var(--bordo-esc);
+      border-color: var(--ouro);
+    }
+
+    .vazio {
+      color: var(--bordo);
+      font-family: var(--font-ui);
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: 2rem 0;
+    }
+
+    @media (max-width: 780px) {
+      header {
+        padding: 1rem 1.25rem;
+      }
+
+      .page {
+        padding: 3rem 1.25rem;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      aside {
+        position: static;
+        order: -1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <a href="index.html">← Voltar ao site</a>
+    <a href="index.html#notas">Todas as Notas</a>
+  </header>
+
+  <main class="page">
+    <section class="topo">
+      <div class="label">Notas Políticas</div>
+      <h1>Arquivo<br>em Movimento</h1>
+    </section>
+
+    <section class="layout">
+      <div>
+        <div class="notas-grid" id="notasGrid">
+          <p class="vazio">Carregando notas...</p>
+        </div>
+      </div>
+
+      <aside>
+        <h2>Categorias</h2>
+        <div id="categoriasLista"></div>
+      </aside>
+    </section>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
+      authDomain: "pajeu-site-teste.firebaseapp.com",
+      projectId: "pajeu-site-teste",
+      storageBucket: "pajeu-site-teste.firebasestorage.app",
+      messagingSenderId: "803113381054",
+      appId: "1:803113381054:web:07e93476b8d129c96082ef",
+      measurementId: "G-9WVNK4CX8E"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const CATS_PADRAO = [
+      "Conjuntura",
+      "Ecossocialismo",
+      "Educação",
+      "Gênero e Sexualidade",
+      "Antirracismo",
+      "Movimento Estudantil"
+    ];
+
+    let todasNotas = [];
+    let categoriaAtual = "Todas";
+
+    const notasGrid = document.getElementById("notasGrid");
+    const categoriasLista = document.getElementById("categoriasLista");
+
+    function formatarData(dataHora) {
+      if (!dataHora) return "";
+      const data = dataHora.toDate ? dataHora.toDate() : new Date(dataHora);
+      return data.toLocaleDateString("pt-BR");
+    }
+
+    function textoLimpo(html) {
+      const div = document.createElement("div");
+      div.innerHTML = html || "";
+      return div.textContent || div.innerText || "";
+    }
+
+    function renderNotas() {
+      const notasFiltradas =
+        categoriaAtual === "Todas"
+          ? todasNotas
+          : todasNotas.filter(n => n.categoria === categoriaAtual);
+
+      if (!notasFiltradas.length) {
+        notasGrid.innerHTML = `<p class="vazio">Nenhuma nota nesta categoria.</p>`;
+        return;
+      }
+
+      notasGrid.innerHTML = notasFiltradas.map(n => {
+        const id = n.firestoreId;
+        const resumo = n.resumo || textoLimpo(n.corpo).slice(0, 140) + "…";
+
+        return `
+          <a class="nota-card" href="nota.html?id=${id}">
+            ${n.capa ? `
+              <div class="nota-capa">
+                <img src="${n.capa}" alt="Imagem de capa da nota">
+              </div>
+            ` : ""}
+
+            <div class="nota-body">
+              <span class="nota-tag">${n.categoria || "Nota Política"}</span>
+              <h2 class="nota-titulo">${n.titulo || ""}</h2>
+              <p class="nota-resumo">${resumo}</p>
+
+              <div class="nota-meta">
+                <span>${n.autor || "Coletivo Pajeú"}</span>
+                <span>${formatarData(n.dataHora)}</span>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join("");
+    }
+
+    function renderCategorias(categorias) {
+      const categoriasUsadas = [...new Set(todasNotas.map(n => n.categoria).filter(Boolean))];
+
+      const todasCategorias = [
+        "Todas",
+        ...new Set([
+          ...CATS_PADRAO,
+          ...categorias,
+          ...categoriasUsadas
+        ])
+      ];
+
+      categoriasLista.innerHTML = todasCategorias.map(cat => `
+        <button
+          class="cat-btn ${cat === categoriaAtual ? "ativa" : ""}"
+          data-cat="${cat}">
+          ${cat}
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          categoriaAtual = btn.dataset.cat;
+          renderCategorias(categorias);
+          renderNotas();
+        });
+      });
+    }
+
+    async function carregarDados() {
+      try {
+        const notasSnap = await getDocs(query(collection(db, "notas"), orderBy("dataHora", "desc")));
+        todasNotas = notasSnap.docs.map(d => ({
+          firestoreId: d.id,
+          ...d.data()
+        }));
+
+        let categoriasExtras = [];
+
+        try {
+          const catsSnap = await getDocs(collection(db, "categorias"));
+          categoriasExtras = catsSnap.docs.map(d => d.data().nome || d.id).filter(Boolean);
+        } catch (e) {
+          console.warn("Não foi possível carregar categorias extras:", e);
+        }
+
+        renderCategorias(categoriasExtras);
+        renderNotas();
+      } catch (e) {
+        console.error(e);
+        notasGrid.innerHTML = `<p class="vazio">Erro ao carregar notas.</p>`;
+      }
+    }
+
+    carregarDados();
+  </script>
+</body>
+</html>
