@@ -335,9 +335,16 @@
 
     let todasNotas = [];
     let categoriaAtual = "Todas";
+    let termoBusca = "";
 
     const notasGrid = document.getElementById("notasGrid");
     const categoriasLista = document.getElementById("categoriasLista");
+    const buscaNotas = document.getElementById("buscaNotas");
+
+      buscaNotas.addEventListener("input", () => {
+        termoBusca = buscaNotas.value;
+        renderNotas();
+      });
 
     function formatarData(dataHora) {
       if (!dataHora) return "";
@@ -352,12 +359,29 @@
     }
 
     function renderNotas() {
-      const notasFiltradas =
-        categoriaAtual === "Todas"
-          ? todasNotas
-          : todasNotas.filter(n => n.categoria === categoriaAtual);
+      const termo = termoBusca.toLowerCase().trim();
 
-      if (!notasFiltradas.length) {
+      const notasFiltradas = todasNotas.filter(n => {
+
+        const passaCategoria =
+          categoriaAtual === "Todas" ||
+          n.categoria === categoriaAtual;
+
+        const textoBusca = `
+          ${n.titulo || ""}
+          ${n.resumo || ""}
+          ${n.categoria || ""}
+          ${n.autor || ""}
+          ${n.corpo || ""}
+        `.toLowerCase();
+
+        const passaBusca =
+          !termo || textoBusca.includes(termo);
+
+        return passaCategoria && passaBusca;
+      });
+
+  if (!notasFiltradas.length) {
         notasGrid.innerHTML = `<p class="vazio">Nenhuma nota nesta categoria.</p>`;
         return;
       }
