@@ -1989,7 +1989,8 @@
     function renderDocsComDados(docs) {
       const grid = document.getElementById('docsGrid');
       if (!grid) return;
-      grid.innerHTML = docs.map(d => `
+      const lista = docs.slice(0, 3);
+      grid.innerHTML = lista.map(d => `
         <a href="${d.link}" target="_blank" class="doc-card">
           <div class="doc-icone">${d.icone || '📄'}</div>
           <div class="doc-info">
