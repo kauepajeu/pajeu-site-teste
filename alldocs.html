@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Arquivo em movimento</title>
+
+  <style>
+    @font-face {
+      font-family: 'pajeutitulo';
+      src: url('./fonts/chinese rocks rg.otf') format('opentype');
+    }
+
+    @font-face {
+      font-family: 'pajeutexto';
+      src: url('./fonts/Montserrat-Regular.otf') format('opentype');
+    }
+
+    :root {
+      --bordo: #7a0c0c;
+      --bordo-esc: #4d0707;
+      --ouro: #e8b84b;
+      --creme: #f4ede0;
+      --creme2: #ede3d0;
+      --branco: #fff8f0;
+      --texto: #1a0808;
+
+      --font-display: 'pajeutitulo', sans-serif;
+      --font-body: 'pajeutexto', Georgia, serif;
+      --font-ui: 'pajeutitulo', 'pajeutexto', serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--creme);
+      color: var(--texto);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    header {
+      background: var(--bordo-esc);
+      border-bottom: 3px solid var(--ouro);
+      padding: 1.2rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    header a {
+      color: var(--ouro);
+      text-decoration: none;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .85rem;
+    }
+
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    .topo {
+      margin-bottom: 2.5rem;
+    }
+
+    .label {
+      font-family: var(--font-body);
+      color: var(--ouro);
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      font-size: .75rem;
+      margin-bottom: .75rem;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      color: var(--bordo-esc);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      line-height: .95;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .busca-wrap {
+      margin-bottom: 2.5rem;
+    }
+
+    #buscaDocs {
+      width: 100%;
+      background: var(--branco);
+      border: 2px solid rgba(122,12,12,.15);
+      color: var(--texto);
+      padding: 1rem;
+      font-family: var(--font-body);
+      font-size: 1rem;
+    }
+
+    #buscaDocs:focus {
+      outline: none;
+      border-color: var(--ouro);
+    }
+
+    .docs-grid {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .doc-card {
+      background: var(--branco);
+      border-left: 5px solid var(--bordo);
+      padding: 1.4rem;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 28px rgba(122,12,12,.12);
+    }
+
+    .doc-tag {
+      font-family: var(--font-ui);
+      color: var(--bordo);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      font-size: .68rem;
+      display: block;
+      margin-bottom: .75rem;
+    }
+
+    .doc-titulo {
+      font-family: var(--font-display);
+      color: var(--bordo-esc);
+      font-size: 1.5rem;
+      line-height: 1.1;
+      margin-bottom: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+
+    .doc-desc {
+      color: #4f2f2f;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+      font-size: .92rem;
+    }
+
+    .doc-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .doc-data {
+      font-family: var(--font-ui);
+      font-size: .72rem;
+      color: #7a5a5a;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .doc-link {
+      background: var(--bordo);
+      color: var(--creme);
+      text-decoration: none;
+      padding: .65rem 1rem;
+      font-family: var(--font-ui);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      transition: background .2s;
+    }
+
+    .doc-link:hover {
+      background: var(--ouro);
+      color: var(--bordo-esc);
+    }
+
+    .vazio {
+      color: var(--bordo);
+      font-family: var(--font-ui);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      padding: 2rem 0;
+    }
+
+    @media (max-width: 680px) {
+      .page {
+        padding: 3rem 1.25rem;
+      }
+
+      header {
+        padding: 1rem 1.25rem;
+      }
+
+      .doc-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <a href="index.html">← Voltar ao site</a>
+    <a href="index.html#documentos">Documentos recentes</a>
+  </header>
+
+  <main class="page">
+
+    <section class="topo">
+      <div class="label">Documentos</div>
+      <h1>Arquivo<br>Documental</h1>
+    </section>
+
+    <div class="busca-wrap">
+      <input type="search" id="buscaDocs" placeholder="Buscar documento..." />
+    </div>
+
+    <section class="docs-grid" id="docsGrid">
+      <p class="vazio">Carregando documentos...</p>
+    </section>
+
+  </main>
+
+  <script type="module">
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      orderBy,
+      query
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
+      authDomain: "pajeu-site-teste.firebaseapp.com",
+      projectId: "pajeu-site-teste",
+      storageBucket: "pajeu-site-teste.firebasestorage.app",
+      messagingSenderId: "803113381054",
+      appId: "1:803113381054:web:07e93476b8d129c96082ef",
+      measurementId: "G-9WVNK4CX8E"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let todosDocs = [];
+    let termoBusca = "";
+
+    const docsGrid = document.getElementById("docsGrid");
+    const buscaDocs = document.getElementById("buscaDocs");
+
+    function formatarData(data) {
+      if (!data) return "";
+      return new Date(data).toLocaleDateString("pt-BR");
+    }
+
+    function renderDocs() {
+
+      const termo = termoBusca.toLowerCase().trim();
+
+      const filtrados = todosDocs.filter(doc => {
+
+        const texto = `
+          ${doc.titulo || ""}
+          ${doc.descricao || ""}
+          ${doc.tipo || ""}
+        `.toLowerCase();
+
+        return !termo || texto.includes(termo);
+
+      });
+
+      if (!filtrados.length) {
+        docsGrid.innerHTML = `
+          <p class="vazio">
+            Nenhum documento encontrado.
+          </p>
+        `;
+        return;
+      }
+
+      docsGrid.innerHTML = filtrados.map(doc => `
+
+        <article class="doc-card">
+
+          <span class="doc-tag">
+            ${doc.tipo || "Documento"}
+          </span>
+
+          <h2 class="doc-titulo">
+            ${doc.titulo || ""}
+          </h2>
+
+          ${doc.descricao ? `
+            <p class="doc-desc">
+              ${doc.descricao}
+            </p>
+          ` : ""}
+
+          <div class="doc-bottom">
+
+            <span class="doc-data">
+              ${formatarData(doc.data)}
+            </span>
+
+            <a
+              href="${doc.link}"
+              target="_blank"
+              class="doc-link">
+
+              Acessar →
+            </a>
+
+          </div>
+
+        </article>
+
+      `).join("");
+
+    }
+
+    buscaDocs.addEventListener("input", () => {
+      termoBusca = buscaDocs.value;
+      renderDocs();
+    });
+
+    async function carregarDocs() {
+
+      try {
+
+        const snap = await getDocs(
+          query(collection(db, "documentos"), orderBy("data", "desc"))
+        );
+
+        todosDocs = snap.docs.map(d => ({
+          firestoreId: d.id,
+          ...d.data()
+        }));
+
+        renderDocs();
+
+      } catch (e) {
+
+        console.error(e);
+
+        docsGrid.innerHTML = `
+          <p class="vazio">
+            Erro ao carregar documentos.
+          </p>
+        `;
+      }
+
+    }
+
+    carregarDocs();
+
+  </script>
+
+</body>
+</html>
