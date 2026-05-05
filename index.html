@@ -1686,7 +1686,15 @@
       const tipo      = document.getElementById('docTipo').value;
       if (!titulo || !link) { alert('Preencha título e link.'); return; }
       try {
-        await addDoc(colDocs, { titulo, descricao, link, tipo, icone: '📄', criadoEm: serverTimestamp() });
+        await addDoc(colDocs, {
+          titulo,
+          descricao,
+          link,
+          tipo,
+          icone: '📄',
+          destaque: false,
+          criadoEm: serverTimestamp()
+        });
         ['docTitulo','docDescricao','docLink'].forEach(id => document.getElementById(id).value = '');
         document.getElementById('docOk').style.display = 'block';
         setTimeout(() => document.getElementById('docOk').style.display = 'none', 3000);
@@ -1989,7 +1997,9 @@
     function renderDocsComDados(docs) {
       const grid = document.getElementById('docsGrid');
       if (!grid) return;
-      const lista = docs.slice(0, 3);
+      const lista = docs
+        .filter(d => d.destaque === true)
+        .slice(0, 3);
       grid.innerHTML = lista.map(d => `
         <a href="${d.link}" target="_blank" class="doc-card">
           <div class="doc-icone">${d.icone || '📄'}</div>
