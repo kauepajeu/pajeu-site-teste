@@ -811,29 +811,43 @@
 
       #inicio {
         padding: 0 1.25rem 3rem;
-        min-height: 100svh;
+        min-height: auto; /* evita espaço gigante desnecessário */
       }
-      .hero-inner { grid-template-columns: 1fr; gap: 0; }
-      .hero-content { padding-top: 100px; padding-bottom: 2rem; }
-      .hero-titulo { font-size: 2.2rem; }
-      .hero-imagem {
-        display: flex;
-        margin-left: 0;
-        margin-right: 0;
-        justify-content: center;
-        overflow: hidden;
-        max-height: none;
-      }
-      .hero-foto {
-        width: 78%;
-        max-width: 360px;
-        height: auto;
-        object-fit: cover;
-        object-position: center top;
-        transform: none;
-        filter: drop-shadow(0 -6px 18px rgba(77,7,7,0.7));
-      }
-      #inicio::before { display: none; }
+
+    .hero-inner {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .hero-content {
+      padding-top: 90px;
+      padding-bottom: 1.5rem;
+    }
+
+  /* CONTAINER DA IMAGEM */
+    .hero-imagem {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 0;
+    overflow: visible; /* não corta a imagem */
+    }
+
+  /* IMAGEM */
+  .hero-foto {
+    width: 100%;
+    max-width: 420px; /* controla tamanho máximo */
+    height: auto;
+    object-fit: contain;
+    object-position: center bottom;
+    transform: none; /* remove deslocamento do desktop */
+    filter: drop-shadow(0 -6px 18px rgba(77,7,7,0.7));
+  }
+
+  /* remove o fundo diagonal no mobile */
+  #inicio::before {
+    display: none;
+  }
 
       .container { padding: 3.5rem 1.25rem; }
       .secao-titulo { letter-spacing: .1rem; }
