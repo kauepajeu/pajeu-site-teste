@@ -1595,7 +1595,12 @@
             <input type="text" id="editNotaTitulo_${i}" value="${n.titulo.replace(/"/g,'&quot;')}" />
             <label>Resumo</label>
             <input type="text" id="editNotaResumo_${i}" value="${(n.resumo||'').replace(/"/g,'&quot;')}" maxlength="200" />
+
+            <label>URL da Imagem de Capa</label>
+            <input type="url" id="editNotaCapa_${i}" value="${(n.capa||'').replace(/"/g,'&quot;')}" placeholder="https://exemplo.com/imagem.jpg" />
+
             <label>Categoria</label>
+            <select id="editNotaCat_${i}">
             <select id="editNotaCat_${i}">
               ${cats.map(c => `<option${c===n.categoria?' selected':''}>${c}</option>`).join('')}
             </select>
