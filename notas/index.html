@@ -393,7 +393,7 @@
           <a class="nota-card" href="/nota.html?id=${id}">
             ${n.capa ? `
               <div class="nota-capa">
-                <img src="${n.capa}" alt="Imagem de capa da nota">
+                <img src="${resolverCapa(n.capa)}" alt="Imagem de capa da nota">
               </div>
             ` : ""}
 
