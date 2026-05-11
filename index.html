@@ -1544,6 +1544,24 @@
       }
 
     });
+
+    window.loginGoogleAdmin = async function() {
+     try {
+      await signInWithPopup(auth, provider);
+
+      const erro = document.getElementById('adminErro');
+      if (erro) erro.style.display = 'none';
+
+     } catch (e) {
+       console.error('Erro no login Google:', e);
+
+       const erro = document.getElementById('adminErro');
+       if (erro) {
+        erro.style.display = 'block';
+        erro.textContent = 'Erro ao entrar com Google.';
+       }
+     }
+   };
     
     // ════════════════════════════════════════════════════════════════
     //  📚 ESTRUTURA DO BANCO DE DADOS (Firestore)
