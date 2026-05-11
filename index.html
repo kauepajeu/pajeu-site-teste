@@ -1524,27 +1524,34 @@
 
     onAuthStateChanged(auth, (user) => {
 
-       const loginBox = document.getElementById('adminLogin');
-       const painel = document.getElementById('adminConteudo');
-
-       if (user) {
-
-        if (loginBox) loginBox.style.display = 'none';
-        if (painel) painel.style.display = 'block';
-
-        console.log('Admin autenticado:', user.email);
-
-      } else {
-
-        if (loginBox) loginBox.style.display = 'block';
-        if (painel) painel.style.display = 'none';
-
-        console.log('Usuário não autenticado');
-
-      }
-
-    });
-
+        const loginBox = document.getElementById('adminLogin');
+        const painel = document.getElementById('adminConteudo');
+      
+        if (user) {
+      
+          if (loginBox) loginBox.style.display = 'none';
+          if (painel) painel.style.display = 'block';
+      
+          console.log('Admin autenticado:', user.email);
+      
+          renderAdminListaNotas();
+          renderAdminListaDocs();
+          preencherCamposQuemSomos();
+          preencherCamposHero();
+          preencherSelectCategorias();
+          renderAdminListaCats();
+      
+        } else {
+      
+          if (loginBox) loginBox.style.display = 'block';
+          if (painel) painel.style.display = 'none';
+      
+          console.log('Usuário não autenticado');
+      
+        }
+      
+      });
+    
     window.loginGoogleAdmin = async function() {
      try {
       await signInWithPopup(auth, provider);
