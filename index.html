@@ -1195,11 +1195,25 @@
   </div>
 
   <!-- ===== PAINEL ADMIN ===== -->
-  <div id="admin-panel">
-    <div class="admin-header">
-      <h2>⚙ Painel Admin — Pajeú</h2>
-      <button class="btn btn-outline" onclick="fecharAdmin()" style="color:var(--ouro);border-color:var(--ouro)">Fechar ✕</button>
+  <div class="admin-header">
+    <h2>⚙ Painel Admin — Pajeú</h2>
+  
+    <div style="display:flex;gap:.75rem;align-items:center">
+      
+      <button class="btn btn-outline"
+        onclick="logoutAdmin()"
+        style="color:#ffb3b3;border-color:#a01515">
+        Sair
+      </button>
+  
+      <button class="btn btn-outline"
+        onclick="fecharAdmin()"
+        style="color:var(--ouro);border-color:var(--ouro)">
+        Fechar ✕
+      </button>
+  
     </div>
+</div>
 
     <!-- LOGIN -->
     <div id="adminLogin" style="max-width:400px;margin:3rem auto;text-align:center">
