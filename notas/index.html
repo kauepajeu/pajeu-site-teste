@@ -357,6 +357,13 @@
       return div.textContent || div.innerText || "";
     }
 
+    function resolverCapa(capa) {
+     if (!capa) return "";
+     if (capa.startsWith("http")) return capa;
+     if (capa.startsWith("/")) return capa;
+     return "/" + capa;
+    }
+    
     function renderNotas() {
       const termo = termoBusca.toLowerCase().trim();
 
