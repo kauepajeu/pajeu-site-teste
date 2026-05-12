@@ -1638,6 +1638,7 @@
       const corpo     = document.getElementById('rteEditor').innerHTML.trim();
       const resumo    = document.getElementById('adminResumo').value.trim();
       const capa      = document.getElementById('adminCapa').value.trim();
+      const fonteImagem = document.getElementById('adminFonteImagem').value.trim();
       const bio       = document.getElementById('adminBio').value.trim();
       const categoria = document.getElementById('adminCategoria').value;
       const autor     = document.getElementById('adminAutor').value.trim() || 'Coletivo Pajeú';
@@ -1657,6 +1658,7 @@
           titulo, categoria, autor, data, dataHora,
           resumo: resumo || corpo.replace(/<[^>]+>/g,'').slice(0,160) + '…',
           capa: capa || '',
+          fonteImagem: fonteImagem || '',
           bio: bio || '',
           corpo,
           fonteNota,
