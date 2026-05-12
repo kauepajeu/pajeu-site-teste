@@ -1533,6 +1533,8 @@
 
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
+    window.auth = auth;
+    window.firebaseSignOut;
 
     onAuthStateChanged(auth, (user) => {
 
@@ -2253,7 +2255,7 @@
     ============================================================ */
     window.logoutAdmin = async function() {
       try {
-          await signOut(auth);
+          await window.firebaseSignOut(window.auth);
         
           document.getElementById('adminConteudo').style.display = 'none';
           document.getElementById('adminLogin').style.display = 'block';
