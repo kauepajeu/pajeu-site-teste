@@ -2234,6 +2234,23 @@
     function toggleNav() {
       document.getElementById('navLinks').classList.toggle('open');
     }
+
+      let contadorAdminMobile = 0;
+
+      document.querySelector(".nav-logo").addEventListener("click", function(e) {
+        contadorAdminMobile++;
+
+        if (contadorAdminMobile >= 5) {
+          e.preventDefault();
+          abrirAdmin();
+          contadorAdminMobile = 0;
+        }
+
+        setTimeout(() => {
+          contadorAdminMobile = 0;
+        }, 2000);
+      });
+    
     /* Fechar menu ao clicar em link */
     document.querySelectorAll('.nav-links a').forEach(a => {
       a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'));
