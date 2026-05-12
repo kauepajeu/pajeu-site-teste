@@ -1689,7 +1689,7 @@
       const autor     = document.getElementById(`editNotaAutor_${i}`).value.trim();
       const bio       = document.getElementById(`editNotaBio_${i}`).value.trim();
       const capa      = document.getElementById(`editNotaCapa_${i}`).value.trim();
-      const fonteImagem = document.getElementById(`editFonteImagem-${id}`).value.trim();
+      const fonteImagem = document.getElementById(`editFonteImagem_${i}`).value.trim();
       if (!titulo || !corpo) return;
       try {
         // updateDoc → atualiza campos de um documento já existente
@@ -1742,20 +1742,12 @@
             <label>URL da Imagem de Capa</label>
             <input type="url" id="editNotaCapa_${i}" value="${(n.capa||'').replace(/"/g,'&quot;')}" placeholder="https://exemplo.com/imagem.jpg" />
             <label>Fonte da imagem</label>
-              <input
-               type="text"
-               id="editFonteImagem-${id}"
-               value="${n.fonteImagem || ''}"
-               placeholder="Ex: Reprodução: Instagram / Foto: Fulano".
-              />
-
-            <label>Fonte da imagem</label>
-              <input
-                type="text"
-                id="editFonteImagem-${id}"
-                value="${n.fonteImagem || ''}"
-                placeholder="Ex: Reprodução: Instagram / Foto: Fulano"
-              />
+            <input
+             type="text"
+             id="editFonteImagem_${i}"
+             value="${(n.fonteImagem || '').replace(/"/g,'&quot;')}"
+             placeholder="Ex: Reprodução: Instagram / Foto: Fulano"
+            />
 
             <label>Categoria</label>
             <select id="editNotaCat_${i}">
