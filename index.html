@@ -2463,7 +2463,90 @@
       
         bloco.style.marginBottom = atual === '1rem' ? '0' : '1rem';
       };
-      
+
+      function rteGetEditEditor(i) {
+  return document.getElementById(`editRteEditor_${i}`);
+}
+
+function rteEditEspacamento(i, valor) {
+  const editor = rteGetEditEditor(i);
+  if (!editor) return;
+
+  editor.focus();
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+
+  let node = sel.anchorNode;
+  while (node && node !== editor) {
+
+    if (node.nodeType === 1) {
+      const tag = node.tagName?.toLowerCase();
+
+      if (['p','div','li'].includes(tag)) {
+        node.style.lineHeight = valor;
+      }
+    }
+
+    node = node.parentNode;
+  }
+}
+
+function rteEditEspacoDepois(i) {
+  const editor = rteGetEditEditor(i);
+  if (!editor) return;
+
+  editor.focus();
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+
+  let node = sel.anchorNode;
+
+  while (node && node !== editor) {
+
+    if (node.nodeType === 1) {
+      const tag = node.tagName?.toLowerCase();
+
+      if (['p','div','li'].includes(tag)) {
+
+        if (node.style.marginBottom === '1rem') {
+          node.style.marginBottom = '0';
+        } else {
+          node.style.marginBottom = '1rem';
+        }
+      }
+    }
+
+    node = node.parentNode;
+  }
+}
+
+function rteEditRecuoPrimeiraLinha(i, aplicar) {
+  const editor = rteGetEditEditor(i);
+  if (!editor) return;
+
+  editor.focus();
+
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+
+  let node = sel.anchorNode;
+
+  while (node && node !== editor) {
+
+    if (node.nodeType === 1) {
+      const tag = node.tagName?.toLowerCase();
+
+      if (['p','div','li'].includes(tag)) {
+        node.style.textIndent = aplicar ? '2em' : '0';
+      }
+    }
+
+    node = node.parentNode;
+  }
+}
+   
       function coletarBloco(no) {
         let el = no.nodeType === 3 ? no.parentElement : no;
         while (el && el !== editor) {
