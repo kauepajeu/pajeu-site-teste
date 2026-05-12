@@ -2246,6 +2246,29 @@
     }
 
     /* ============================================================
+       LOGOUT
+    ============================================================ */
+    async function logoutAdmin() {
+    
+      try {
+    
+        await signOut(auth);
+    
+        document.getElementById('adminConteudo').style.display = 'none';
+        document.getElementById('adminLogin').style.display = 'block';
+    
+        alert('Logout realizado.');
+    
+      } catch (erro) {
+    
+        console.error('Erro ao sair:', erro);
+        alert('Erro ao sair.');
+    
+      }
+    
+    }
+    
+    /* ============================================================
        ADMIN — ABAS
     ============================================================ */
     function abrirTab(id, btn) {
