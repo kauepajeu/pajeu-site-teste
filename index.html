@@ -1887,12 +1887,16 @@
       document.getElementById('catOk').style.display = 'block';
       setTimeout(() => document.getElementById('catOk').style.display = 'none', 2500);
       await window.carregarCategorias();
+      preencherSelectCategorias();
+      renderAdminListaCats();
     };
 
     window.excluirCategoria = async function(firestoreId) {
       if (!confirm('Remover esta categoria?')) return;
       await deleteDoc(doc(db, 'categorias', firestoreId));
       await window.carregarCategorias();
+      preencherSelectCategorias();
+      renderAdminListaCats();
     };
 
     window.carregarCategorias = async function() {
