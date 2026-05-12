@@ -1536,12 +1536,27 @@
     window.auth = auth;
     window.firebaseSignOut = signOut;
 
+    const EMAILS_AUTORIZADOS = {
+      "contatopajeuor@gmail.com"
+      "livekaue4321@gmail.com"
+    };
+
     onAuthStateChanged(auth, (user) => {
 
         const loginBox = document.getElementById('adminLogin');
         const painel = document.getElementById('adminConteudo');
       
         if (user) {
+          if (!EMAILS.AUTORIZADOS.includes(user.email)) {
+            alert("Este e-mail não tem autorização para acessar o painel.");
+
+            await signOut(auth);
+
+            if (loginBox) loginBox.style.display = "block";
+            if (painel) painel.style.display = "none";
+
+            return;
+          }
       
           if (loginBox) loginBox.style.display = 'none';
           if (painel) painel.style.display = 'block';
