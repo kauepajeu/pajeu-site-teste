@@ -2398,24 +2398,76 @@
       rteAtualizarBotoes();
     }
 
-    function rteEspacamento(val) {
-      if (!val) return;
-      const editor = document.getElementById('rteEditor');
-      editor.focus();
-      // Aplica line-height a todos os parágrafos e blocos dentro do editor
-      const sel = window.getSelection();
-      if (sel && sel.rangeCount) {
-        const range = sel.getRangeAt(0);
-        const container = range.commonAncestorContainer;
-        const block = (container.nodeType === 3 ? container.parentElement : container);
-        const closest = block.closest('[contenteditable]') ? block : editor;
-        // Aplica ao bloco mais próximo ou ao editor todo
-        const target = closest === editor ? editor : block;
-        target.style.lineHeight = val;
-      } else {
-        editor.style.lineHeight = val;
-      }
-    }
+    function rteEditorAtual() {
+  const ativo = document.activeElement;
+
+  if (ativo && ativo.classList && ativo.classList.contains('rte-editor')) {
+    return ativo;
+  }
+
+  return document.getElementById('rteEditor');
+}
+
+function rteBlocoAtual(editor) {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return null;
+
+  let node = sel.anchorNode;
+  if (!node) return null;
+
+  if (node.nodeType === 3) node = node.parentElement;
+
+  while (node && node !== editor) {
+    const tag = node.tagName ? node.tagName.toLowerCase() : '';
+    if (['p', 'div', 'li', 'blockquote'].includes(tag)) return node;
+    node = node.parentElement;
+  }
+
+  return editor;
+}
+
+function rteEspacamento(val) {
+  if (!val) return;
+
+  const editor = rteEditorAtual();
+  const bloco = rteBlocoAtual(editor);
+
+  if (!bloco) return;
+
+  bloco.style.lineHeight = val;
+}
+
+function rteRecuoPrimeiraLinha(aplicar) {
+  const editor = rteEditorAtual();
+  const bloco = rteBlocoAtual(editor);
+
+  if (!bloco) return;
+
+  if (aplicar) {
+    bloco.setAttribute('data-recuo', 'true');
+    bloco.style.textIndent = '2em';
+  } else {
+    bloco.removeAttribute('data-recuo');
+    bloco.style.textIndent = '0';
+  }
+}
+
+function rteEspacoDepois() {
+  const editor = rteEditorAtual();
+  const bloco = rteBlocoAtual(editor);
+
+  if (!bloco) return;
+
+  const ativo = bloco.getAttribute('data-espaco') === 'true';
+
+  if (ativo) {
+    bloco.removeAttribute('data-espaco');
+    bloco.style.marginBottom = '0';
+  } else {
+    bloco.setAttribute('data-espaco', 'true');
+    bloco.style.marginBottom = '1.2rem';
+  }
+}
 
     /* Aplica fonte à seleção atual (ou ao bloco se não houver seleção de texto) */
     function rteFonte(val) {
@@ -2467,36 +2519,6 @@
         if (btn) btn.classList.toggle('ativo', document.queryCommandState(cmd));
       });
     }
-
-    /* Aplica/remove text-indent (recuo de 1ª linha) no(s) bloco(s) selecionado(s) */
-    function rteRecuoPrimeiraLinha(aplicar) {
-      const editor = document.getElementById('rteEditor');
-      editor.focus();
-      const sel = window.getSelection();
-      if (!sel || !sel.rangeCount) return;
-
-      const range = sel.getRangeAt(0);
-      // Coleta todos os nós de bloco dentro da seleção
-      const blocos = new Set();
-
-      window.rteEspacoDepois = function() {
-        const selection = window.getSelection();
-        if (!selection.rangeCount) return;
-      
-        let node = selection.anchorNode;
-      
-        while (node && node.nodeType !== 1) {
-          node = node.parentNode;
-        }
-      
-        const bloco = node?.closest('p, div');
-      
-        if (!bloco || !document.getElementById('rteEditor').contains(bloco)) return;
-      
-        const atual = bloco.style.marginBottom;
-      
-        bloco.style.marginBottom = atual === '1rem' ? '0' : '1rem';
-      };
 
       function rteGetEditEditor(i) {
   return document.getElementById(`editRteEditor_${i}`);
