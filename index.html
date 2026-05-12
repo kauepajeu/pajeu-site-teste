@@ -2253,13 +2253,16 @@
     ============================================================ */
     window.logoutAdmin = async function() {
       try {
-        await signOut(auth);
-        document.getElementById('adminConteudo').style.display = 'none';
-        document.getElementById('adminLogin').style.display = 'block';
-        alert('Logout realizado.');
+          await signOut(auth);
+        
+          document.getElementById('adminConteudo').style.display = 'none';
+          document.getElementById('adminLogin').style.display = 'block';
+        
+          alert('Logout realizado.');
+      
       } catch (erro) {
-        console.error('Erro ao sair:', erro);
-        alert('Erro ao sair.');
+          console.error('Erro ao sair:', erro);
+          alert('Erro ao sair.');
       }
     };
     
