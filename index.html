@@ -2206,7 +2206,9 @@
        Não aparece em nenhum lugar do site.
     ============================================================ */
     document.addEventListener('keydown', function(e) {
-      if (e.ctrlKey && e.shiftKey && e.key === 'P') {
+      const tecla = e.key.toLowerCase();
+      
+      if (e.ctrlKey && e.shiftKey && tecla === 'p') {
         e.preventDefault();
         abrirAdmin();
       }
