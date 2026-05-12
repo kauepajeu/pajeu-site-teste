@@ -1780,11 +1780,11 @@
               <button type="button" onclick="rteEditCmd(${i},'justifyFull')">≡</button>
               <span class="rte-sep"></span>
 
-              <button type="button"
-              onclick="rteEditEspacamento(${i}, 1)">1.0</button>
-
-              <button type="button"
-              onclick="rteEditEspacamento(${i}, 1.5)">1.5</button>
+              <select title="Espaçamento entre linhas" onchange="rteEditEspacamento(${i}, this.value)">
+                <option value="">Espaç.</option>
+                <option value="1">1×</option>
+                <option value="1.5">1,5×</option>
+              </select>
               
               <button type="button"
               onclick="rteEditRecuoPrimeiraLinha(${i}, true)">↦</button>
@@ -2532,10 +2532,6 @@ function rteEditEspacamento(id, val) {
   editor.querySelectorAll('p, div, span, li').forEach(el => {
     el.style.lineHeight = val;
   });
-}
-
-    node = node.parentNode;
-  }
 }
 
 function rteEditEspacoDepois(i) {
