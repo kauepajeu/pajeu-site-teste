@@ -1547,7 +1547,7 @@
         const painel = document.getElementById('adminConteudo');
       
         if (user) {
-          if (!EMAILS.AUTORIZADOS.includes(user.email)) {
+          if (!EMAILS_AUTORIZADOS.includes(user.email)) {
             alert("Este e-mail não tem autorização para acessar o painel.");
 
             await signOut(auth);
