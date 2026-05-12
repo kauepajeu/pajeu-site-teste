@@ -1770,6 +1770,25 @@
               <button type="button" onclick="rteEditCmd(${i},'justifyCenter')">☰</button>
               <button type="button" onclick="rteEditCmd(${i},'justifyRight')">➡</button>
               <button type="button" onclick="rteEditCmd(${i},'justifyFull')">≡</button>
+              <span class="rte-sep"></span>
+
+              <button type="button"
+              onclick="rteEditEspacamento(${i}, 1.2)">1.2</button>
+              
+              <button type="button"
+              onclick="rteEditEspacamento(${i}, 1.6)">1.6</button>
+              
+              <button type="button"
+              onclick="rteEditEspacamento(${i}, 2)">2.0</button>
+              
+              <button type="button"
+              onclick="rteEditRecuoPrimeiraLinha(${i}, true)">↦</button>
+              
+              <button type="button"
+              onclick="rteEditRecuoPrimeiraLinha(${i}, false)">↤</button>
+              
+              <button type="button"
+              onclick="rteEditEspacoDepois(${i})">⭥¶</button>
             </div>
             <div id="editRteEditor_${i}" class="rte-editor" contenteditable="true"
               style="min-height:180px">${n.corpo}</div>
