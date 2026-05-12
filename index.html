@@ -2602,48 +2602,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     node = node.parentNode;
   }
 }
-   
-      function coletarBloco(no) {
-        let el = no.nodeType === 3 ? no.parentElement : no;
-        while (el && el !== editor) {
-          const tag = el.tagName ? el.tagName.toLowerCase() : '';
-          if (['p','div','li','blockquote','h1','h2','h3','h4','h5','h6'].includes(tag)) {
-            blocos.add(el);
-            return;
-          }
-          el = el.parentElement;
-        }
-        // Nó de texto solto — envolve em <p>
-        if (no.nodeType === 3 && no.parentElement === editor) {
-          const p = document.createElement('p');
-          no.parentNode.insertBefore(p, no);
-          p.appendChild(no);
-          blocos.add(p);
-        }
-      }
-
-      // Se a seleção cobre múltiplos nós, percorre todos
-      const walker = document.createTreeWalker(
-        range.commonAncestorContainer,
-        NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
-        null
-      );
-      let node = walker.nextNode();
-      while (node) {
-        if (range.intersectsNode(node)) coletarBloco(node);
-        node = walker.nextNode();
-      }
-      // Garante que o nó de início/fim também seja capturado
-      coletarBloco(range.startContainer);
-      coletarBloco(range.endContainer);
-
-      if (blocos.size === 0) return;
-
-      blocos.forEach(el => {
-        el.style.textIndent = aplicar ? '2em' : '0';
-      });
-    }
-
+    
     /* ============================================================
        CATEGORIAS
     ============================================================ */
