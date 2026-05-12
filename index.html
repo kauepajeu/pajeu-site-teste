@@ -1534,7 +1534,7 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
     window.auth = auth;
-    window.firebaseSignOut;
+    window.firebaseSignOut = signOut;
 
     onAuthStateChanged(auth, (user) => {
 
