@@ -1689,11 +1689,12 @@
       const autor     = document.getElementById(`editNotaAutor_${i}`).value.trim();
       const bio       = document.getElementById(`editNotaBio_${i}`).value.trim();
       const capa      = document.getElementById(`editNotaCapa_${i}`).value.trim();
+      const fonteImagem = document.getElementById(`editFonteImagem-${id}`).value.trim();
       if (!titulo || !corpo) return;
       try {
         // updateDoc → atualiza campos de um documento já existente
         await updateDoc(doc(db, 'notas', firestoreId), {
-          titulo, categoria, autor, bio, capa,
+          titulo, categoria, autor, bio, capa, fonteImagem,
           resumo: resumo || corpo.replace(/<[^>]+>/g,'').slice(0,160) + '…',
           corpo, editadoEm: new Date().toISOString()
         });
