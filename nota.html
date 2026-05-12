@@ -107,6 +107,15 @@
       margin-bottom: 2.5rem;
     }
 
+    .fonte-imagem {
+      font-size: .72rem;
+      color: #7a5a5a;
+      margin-top: .45rem;
+      margin-bottom: 1rem;
+      font-style: italic;
+      text-align: right;
+     }
+
     .corpo {
       font-size: 1rem;
       line-height: 1.9;
@@ -217,7 +226,16 @@
           ${formatarData(nota.dataHora)}
         </div>
 
-        ${nota.capa ? `<img src="${nota.capa}" alt="Imagem de capa da nota" class="capa">` : ""}
+        ${nota.capa ? `
+         <img src="${nota.capa}" alt="Imagem de capa da nota" class="capa">
+
+         ${nota.fonteImagem ? `.
+           <p class="fonte-imagem">
+             ${nota.fonteImagem}
+           </p>
+         ` : ""}
+
+       ` : ""}
 
         <article class="corpo">
           ${nota.corpo || ""}
