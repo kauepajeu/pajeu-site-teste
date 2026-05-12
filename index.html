@@ -1781,13 +1781,10 @@
               <span class="rte-sep"></span>
 
               <button type="button"
-              onclick="rteEditEspacamento(${i}, 1.2)">1.2</button>
-              
+              onclick="rteEditEspacamento(${i}, 1)">1.0</button>
+
               <button type="button"
-              onclick="rteEditEspacamento(${i}, 1.6)">1.6</button>
-              
-              <button type="button"
-              onclick="rteEditEspacamento(${i}, 2)">2.0</button>
+              onclick="rteEditEspacamento(${i}, 1.5)">1.5</button>
               
               <button type="button"
               onclick="rteEditRecuoPrimeiraLinha(${i}, true)">↦</button>
@@ -2524,25 +2521,18 @@ function rteEspacoDepois() {
   return document.getElementById(`editRteEditor_${i}`);
 }
 
-function rteEditEspacamento(i, valor) {
-  const editor = rteGetEditEditor(i);
+function rteEditEspacamento(id, val) {
+  if (!val) return;
+
+  const editor = rteGetEditEditor(id);
   if (!editor) return;
 
-  editor.focus();
+  editor.style.lineHeight = val;
 
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-
-  let node = sel.anchorNode;
-  while (node && node !== editor) {
-
-    if (node.nodeType === 1) {
-      const tag = node.tagName?.toLowerCase();
-
-      if (['p','div','li'].includes(tag)) {
-        node.style.lineHeight = valor;
-      }
-    }
+  editor.querySelectorAll('p, div, span, li').forEach(el => {
+    el.style.lineHeight = val;
+  });
+}
 
     node = node.parentNode;
   }
