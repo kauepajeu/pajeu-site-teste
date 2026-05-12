@@ -2366,6 +2366,32 @@
     /* ============================================================
        EDITOR DE TEXTO RICO — helpers
     ============================================================ */
+    function normalizarEditorEmParagrafos(editor) {
+      if (!editor) return;
+    
+      const filhos = Array.from(editor.childNodes);
+    
+      filhos.forEach(no => {
+        if (no.nodeType === 3 && no.textContent.trim()) {
+          const p = document.createElement('p');
+          p.textContent = no.textContent;
+          editor.replaceChild(p, no);
+        }
+    
+        if (no.nodeType === 1 && no.tagName.toLowerCase() === 'div') {
+          const p = document.createElement('p');
+          p.innerHTML = no.innerHTML;
+          editor.replaceChild(p, no);
+        }
+      });
+    }
+    
+    document.addEventListener('focusin', function(e) {
+      if (e.target?.id === 'rteEditor' || e.target?.id?.startsWith('editRteEditor_')) {
+        normalizarEditorEmParagrafos(e.target);
+      }
+    });
+    
     function rteCmd(cmd, val) {
       document.getElementById('rteEditor').focus();
       document.execCommand(cmd, false, val || null);
