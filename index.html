@@ -2426,6 +2426,25 @@
       // Coleta todos os nós de bloco dentro da seleção
       const blocos = new Set();
 
+      window.rteEspacoDepois = function() {
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+      
+        let node = selection.anchorNode;
+      
+        while (node && node.nodeType !== 1) {
+          node = node.parentNode;
+        }
+      
+        const bloco = node?.closest('p, div');
+      
+        if (!bloco || !document.getElementById('rteEditor').contains(bloco)) return;
+      
+        const atual = bloco.style.marginBottom;
+      
+        bloco.style.marginBottom = atual === '1rem' ? '0' : '1rem';
+      };
+      
       function coletarBloco(no) {
         let el = no.nodeType === 3 ? no.parentElement : no;
         while (el && el !== editor) {
