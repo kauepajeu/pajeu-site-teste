@@ -2959,6 +2959,18 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       el.remove();
     }
 
+    function certCmd(id, cmd) {
+      const editor = document.getElementById(`certTexto_${id}`);
+      if (!editor) return;
+    
+      editor.focus();
+      document.execCommand(cmd, false, null);
+    
+      if (_atividadeCerts[id]) {
+        _atividadeCerts[id].texto = editor.innerHTML;
+      }
+    }
+
     function atividadeAdicionarCert() {
       const id = _certIdx++;
       _atividadeCerts.push({ img: '', texto: '' });
@@ -2990,11 +3002,41 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
 
         <div>
           <label style="font-family:var(--font-ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.3rem">
-            Texto do Certificado
+            Carga horária
           </label>
-          <textarea id="certTexto_${id}" style="min-height:80px;background:rgba(255,255,255,.07);border:1px solid rgba(232,184,75,.3);color:var(--creme);padding:.65rem .9rem;width:100%;font-family:var(--font-body);font-size:.9rem;resize:vertical"
-            placeholder="Descreva o certificado ou insira o conteúdo..."
-            oninput="_atividadeCerts[${id}] && (_atividadeCerts[${id}].texto = this.value)"></textarea>
+          <input type="text" id="certCarga_${id}" placeholder="Ex: 4h, 8h, 20h"
+            style="background:rgba(255,255,255,.07);border:1px solid rgba(232,184,75,.3);color:var(--creme);padding:.65rem .9rem;width:100%;font-family:var(--font-body);font-size:.9rem"
+            oninput="_atividadeCerts[${id}] && (_atividadeCerts[${id}].cargaHoraria = this.value)" />
+        </div>
+        
+        <div>
+          <label style="font-family:var(--font-ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.3rem">
+            Texto automático do certificado
+          </label>
+        
+          <p style="font-size:.75rem;color:var(--creme2);opacity:.7;margin-bottom:.4rem">
+            Use: {nome}, {atividade}, {data}, {cargaHoraria}
+          </p>
+        
+          <div class="rte-toolbar">
+            <button type="button" onclick="certCmd(${id}, 'bold')"><b>N</b></button>
+            <button type="button" onclick="certCmd(${id}, 'italic')"><i>I</i></button>
+          </div>
+        
+          <div id="certTexto_${id}" class="rte-editor" contenteditable="true"
+            style="min-height:100px;max-height:220px;font-family:var(--font-body);font-style:normal;font-weight:400"
+            oninput="_atividadeCerts[${id}] && (_atividadeCerts[${id}].texto = this.innerHTML)">
+            Certificamos que <strong>{nome}</strong> participou da atividade <strong>{atividade}</strong>, realizada em {data}, com carga horária de {cargaHoraria}.
+          </div>
+        </div>
+        
+        <div>
+          <label style="font-family:var(--font-ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.3rem">
+            Participantes
+          </label>
+          <textarea id="certParticipantes_${id}" style="min-height:120px;background:rgba(255,255,255,.07);border:1px solid rgba(232,184,75,.3);color:var(--creme);padding:.65rem .9rem;width:100%;font-family:var(--font-body);font-size:.9rem;resize:vertical"
+            placeholder="Um nome por linha&#10;Ex: Maria Silva&#10;João Santos"
+            oninput="_atividadeCerts[${id}] && (_atividadeCerts[${id}].participantes = this.value)"></textarea>
         </div>
       `;
       lista.appendChild(item);
