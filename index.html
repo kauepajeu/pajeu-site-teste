@@ -1742,6 +1742,7 @@
     const colDocs   = collection(db, 'documentos');
     const colCats   = collection(db, 'categorias');
     const refConfig = doc(db, 'config', 'site');
+    const colAtividades = collection(db, 'atividades');
 
     // ── NOTAS ────────────────────────────────────────────────────
 
@@ -3065,7 +3066,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       if (el) el.remove();
     }
 
-    function publicarAtividade() {
+    async function publicarAtividade() {
       const titulo    = document.getElementById('atividadeTitulo').value.trim();
       const descricao = document.getElementById('atividadeDescricao').value.trim();
       const data      = document.getElementById('atividadeData').value;
@@ -3087,13 +3088,14 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       };
     });
 
-      const salvas = ls('pajeu_atividades', []);
-      salvas.push({
-        id: 'atv_' + Date.now(),
-        titulo, descricao, data, fotos, certificados,
-        criadoEm: new Date().toISOString()
+      await addDoc(colAtividades, {
+        título,
+        descrição,
+        data,
+        fotos,
+        certificados,
+        criadoEm: serverTimestamp()
       });
-      lsSet('pajeu_atividades', salvas);
 
       // Reset
       document.getElementById('atividadeTitulo').value    = '';
