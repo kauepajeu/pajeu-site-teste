@@ -230,6 +230,63 @@ if(!cert){
   throw new Error('certificado');
 }
 
+function normalizarNome(str){
+  return (str || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+}
+
+const participantes = cert.participantes || [];
+const nomeNormalizado = normalizarNome(nome);
+
+const autorizado = participantes.some(p => {
+  return normalizarNome(p) === nomeNormalizado;
+});
+
+if (!autorizado) {
+  document.body.innerHTML = `
+    <div style="
+      max-width:720px;
+      margin:4rem auto;
+      background:white;
+      padding:2rem;
+      border-left:5px solid #7a0c0c;
+      font-family:'pajeutexto', sans-serif;
+      color:#2d1111;
+      line-height:1.7;
+    ">
+      <h1 style="
+        font-family:'pajeutitulo', sans-serif;
+        color:#7a0c0c;
+        letter-spacing:.08em;
+        text-transform:uppercase;
+        margin-bottom:1rem;
+      ">
+        Certificado não encontrado
+      </h1>
+
+      <p>
+        O nome informado não consta na lista de participantes desta atividade.
+      </p>
+
+      <p style="margin-top:1rem;font-size:.9rem;color:#6a4040">
+        Verifique se o nome foi digitado exatamente como consta na lista de presença.
+      </p>
+
+      <p style="margin-top:1.5rem">
+        <a href="atividade.html?id=${encodeURIComponent(atividadeId)}" style="color:#7a0c0c;font-weight:700">
+          ← Voltar para a atividade
+        </a>
+      </p>
+    </div>
+  `;
+
+  throw new Error('participante_nao_autorizado');
+}
+
 function formatarData(data){
   if(!data) return '';
 
