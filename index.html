@@ -1575,12 +1575,18 @@
 
           <!-- Fotos -->
           <div>
-            <label>Fotos da Atividade</label>
-            <div id="atividadeFotosLista" style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:.75rem"></div>
-            <label for="atividadeFotoInput" class="btn btn-outline" style="cursor:pointer;display:inline-block;font-size:.75rem;padding:.55rem 1.1rem">
-              + Adicionar Foto
-            </label>
-            <input type="file" id="atividadeFotoInput" accept="image/*" multiple style="display:none" onchange="atividadeAdicionarFotos(this)" />
+            <label>Imagens da atividade</label>
+          
+            <div id="atividadeFotosLista" style="display:flex;flex-direction:column;gap:1rem;margin-bottom:.75rem"></div>
+          
+            <button type="button" onclick="atividadeAdicionarFotoCampo()" class="btn btn-outline"
+              style="cursor:pointer;display:inline-block;font-size:.75rem;padding:.55rem 1.1rem;color:var(--ouro);border-color:rgba(232,184,75,.5)">
+              + Adicionar imagem
+            </button>
+          
+            <p style="color:var(--creme2);opacity:.65;font-size:.75rem;margin-top:.35rem">
+              Máximo de 5 imagens. Use caminhos como <strong>fotos/atividades/nome-da-imagem.jpg</strong>.
+            </p>
           </div>
 
           <!-- Separador Certificados -->
@@ -2922,6 +2928,62 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     // Armazena as fotos (base64) da atividade em edição
     let _atividadeFotos = [];
 
+    window.atividadeAdicionarFotoCampo = function() {
+      if (_atividadeFotos.length >= 5) {
+        alert('Você pode adicionar no máximo 5 imagens.');
+        return;
+      }
+    
+      const id = _atividadeFotos.length;
+    
+      _atividadeFotos.push({
+        url: '',
+        fonte: ''
+      });
+    
+      const lista = document.getElementById('atividadeFotosLista');
+      if (!lista) return;
+    
+      const item = document.createElement('div');
+      item.id = `atividadeFotoItem_${id}`;
+      item.style.cssText = `
+        border:1px solid rgba(232,184,75,.25);
+        padding:1rem;
+        background:rgba(255,255,255,.04);
+      `;
+    
+      item.innerHTML = `
+        <label>Imagem ${id + 1} — caminho ou URL</label>
+        <input type="text"
+          id="atividadeFotoUrl_${id}"
+          placeholder="Ex: fotos/atividades/encontro-belem-01.jpg">
+    
+        <label>Crédito / reprodução da imagem ${id + 1}</label>
+        <input type="text"
+          id="atividadeFotoFonte_${id}"
+          placeholder="Ex: Foto: Fulano / Reprodução: Instagram">
+    
+        <p style="color:var(--ouro);font-size:.75rem;margin-top:.4rem">
+          Use no texto: <strong>{foto${id + 1}}</strong>
+        </p>
+    
+        <button type="button"
+          onclick="atividadeRemoverFotoCampo(${id})"
+          style="margin-top:.5rem;background:rgba(160,21,21,.6);color:var(--creme);border:none;padding:.4rem .75rem;font-family:var(--font-ui);cursor:pointer">
+          Remover imagem
+        </button>
+      `;
+    
+      lista.appendChild(item);
+    };
+    
+    window.atividadeRemoverFotoCampo = function(id) {
+      _atividadeFotos[id] = null;
+    
+      const item = document.getElementById(`atividadeFotoItem_${id}`);
+      if (item) item.remove();
+    };
+
     // Armazena os certificados ({ img: base64|'', texto: '' }) em edição
     let _atividadeCerts = [];
 
@@ -3067,7 +3129,13 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       const data      = document.getElementById('atividadeData').value;
       if (!titulo) return;
 
-      const fotos = _atividadeFotos.filter(Boolean);
+      const fotos = _atividadeFotos
+        .filter(Boolean)
+        .map((f, i) => ({
+          url: document.getElementById(`atividadeFotoUrl_${i}`)?.value.trim() || '',
+          fonte: document.getElementById(`atividadeFotoFonte_${i}`)?.value.trim() || ''
+        }))
+        .filter(f => f.url);
       const certificados = _atividadeCerts.filter(Boolean).map((c, i) => {
       const textoEl = document.getElementById(`certTexto_${i}`);
       const cargaEl = document.getElementById(`certCarga_${i}`);
@@ -3096,8 +3164,8 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       document.getElementById('atividadeTitulo').value    = '';
       document.getElementById('atividadeDescricao').value = '';
       document.getElementById('atividadeData').value      = '';
-      document.getElementById('atividadeFotosLista').innerHTML = '';
       document.getElementById('atividadeCertsLista').innerHTML = '';
+      document.getElementById('atividadeFotosLista').innerHTML = '';
       _atividadeFotos = [];
       _atividadeCerts = [];
       _certIdx = 0;
