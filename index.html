@@ -1649,13 +1649,13 @@
 
     const firebaseConfig = {
       apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
-    authDomain: "pajeu-site-teste.firebaseapp.com",
-    projectId: "pajeu-site-teste",
-    storageBucket: "pajeu-site-teste.firebasestorage.app",
-    messagingSenderId: "803113381054",
-    appId: "1:803113381054:web:07e93476b8d129c96082ef",
-    measurementId: "G-9WVNK4CX8E"
-    };
+      authDomain: "pajeu-site-teste.firebaseapp.com",
+      projectId: "pajeu-site-teste",
+      storageBucket: "pajeu-site-teste.firebasestorage.app",
+      messagingSenderId: "803113381054",
+      appId: "1:803113381054:web:07e93476b8d129c96082ef",
+      measurementId: "G-9WVNK4CX8E"
+      };
 
     const app = initializeApp(firebaseConfig);
     const db  = getFirestore(app);
@@ -1743,6 +1743,17 @@
     const colCats   = collection(db, 'categorias');
     const refConfig = doc(db, 'config', 'site');
     const colAtividades = collection(db, 'atividades');
+    
+    window.db = db;
+    window.colAtividades = colAtividades;
+    
+    window.addDoc = addDoc;
+    window.getDocs = getDocs;
+    window.getDoc = getDoc;
+    window.updateDoc = updateDoc;
+    window.deleteDoc = deleteDoc;
+    window.doc = doc;
+    window.serverTimestamp = serverTimestamp;
 
     // ── NOTAS ────────────────────────────────────────────────────
 
