@@ -1567,6 +1567,43 @@
             <textarea id="atividadeDescricao" style="min-height:120px" placeholder="Descreva a atividade..."></textarea>
           </div>
 
+          <!-- Texto completo -->
+          <div>
+            <label>Texto completo</label>
+          
+            <div class="rte-toolbar">
+              <button type="button" onclick="atividadeTextoCmd('bold')"><b>N</b></button>
+              <button type="button" onclick="atividadeTextoCmd('italic')"><i>I</i></button>
+              <button type="button" onclick="atividadeTextoCmd('underline')"><u>S</u></button>
+              <span class="rte-sep"></span>
+              <button type="button" onclick="atividadeTextoCmd('justifyLeft')">⬅</button>
+              <button type="button" onclick="atividadeTextoCmd('justifyCenter')">☰</button>
+              <button type="button" onclick="atividadeTextoCmd('justifyRight')">➡</button>
+              <button type="button" onclick="atividadeTextoCmd('justifyFull')">≡</button>
+              <span class="rte-sep"></span>
+              <button type="button" title="Aumentar recuo" onclick="atividadeTextoCmd('indent')">⇥</button>
+              <button type="button" title="Diminuir recuo" onclick="atividadeTextoCmd('outdent')">⇤</button>
+            </div>
+
+            <div
+              id="atividadeCorpo"
+              class="rte-editor"
+              contenteditable="true"
+              style="min-height:220px"
+            ><</div>
+          
+            <div
+              id="atividadeCorpo"
+              class="rte-editor"
+              contenteditable="true"
+              style="min-height:220px"
+            ></div>
+          
+            <p style="color:var(--creme2);opacity:.65;font-size:.75rem;margin-top:.35rem">
+              Use <strong>{foto1}</strong>, <strong>{foto2}</strong> etc. para inserir as imagens no texto.
+            </p>
+          </div>
+
           <!-- Data -->
           <div>
             <label>Data</label>
@@ -3123,6 +3160,15 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       if (el) el.remove();
     }
 
+    window.atividadeTextoCmd = function(cmd) {
+      const editor = document.getElementById('atividadeCorpo');
+      if (!editor) return;
+    
+      editor.focus();
+      document.execCommand(cmd, false, null);
+    };
+
+
     window.publicarAtividade = async function() {
       const titulo    = document.getElementById('atividadeTitulo').value.trim();
       const descricao = document.getElementById('atividadeDescricao').value.trim();
@@ -3154,6 +3200,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       await addDoc(colAtividades, {
         titulo,
         descricao,
+        corpo,
         data,
         fotos,
         certificados,
