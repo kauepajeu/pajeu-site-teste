@@ -1581,16 +1581,9 @@
               <button type="button" onclick="atividadeTextoCmd('justifyRight')">➡</button>
               <button type="button" onclick="atividadeTextoCmd('justifyFull')">≡</button>
               <span class="rte-sep"></span>
-              <button type="button" title="Aumentar recuo" onclick="atividadeTextoCmd('indent')">⇥</button>
-              <button type="button" title="Diminuir recuo" onclick="atividadeTextoCmd('outdent')">⇤</button>
+              <button type="button" title="Aumentar recuo" onclick="atividadeTextoCmd('')">⇥</button>
+              <button type="button" title="Diminuir recuo" onclick="atividadeTextoCmd('')">⇤</button>
             </div>
-
-            <div
-              id="atividadeCorpo"
-              class="rte-editor"
-              contenteditable="true"
-              style="min-height:220px"
-            ><</div>
           
             <div
               id="atividadeCorpo"
@@ -2800,46 +2793,6 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     /* ============================================================
        ADMIN — NOTAS
     ============================================================ */
-    function publicarNota() {
-      const titulo    = document.getElementById('adminTitulo').value.trim();
-      const corpo     = document.getElementById('rteEditor').innerHTML.trim();
-      const resumo    = document.getElementById('adminResumo').value.trim();
-      const capa      = document.getElementById('adminCapa').value.trim();
-      const bio       = document.getElementById('adminBio').value.trim();
-      const categoria = document.getElementById('adminCategoria').value;
-      const autor     = document.getElementById('adminAutor').value.trim() || 'Coletivo Pajeú';
-      const dataInput = document.getElementById('adminDataPublicacao').value;
-      if (!titulo || !corpo) return;
-
-      const agora = new Date();
-      const dataHora = dataInput ? new Date(dataInput).toISOString() : agora.toISOString();
-      const dataSomente = dataHora.split('T')[0];
-
-      const salvas = ls('pajeu_notas', []);
-      const novaId = Date.now();
-      salvas.push({
-        id: novaId, titulo, categoria, autor,
-        data: dataSomente, dataHora,
-        resumo: resumo || corpo.replace(/<[^>]+>/g,'').slice(0, 50),
-        capa: capa || '',
-        bio: bio || '',
-        corpo
-      });
-      lsSet('pajeu_notas', salvas);
-
-      document.getElementById('adminTitulo').value = '';
-      document.getElementById('adminResumo').value = '';
-      document.getElementById('adminCapa').value = '';
-      document.getElementById('adminBio').value = '';
-      document.getElementById('rteEditor').innerHTML = '';
-      document.getElementById('adminAutor').value = '';
-      document.getElementById('adminDataPublicacao').value = '';
-      document.getElementById('adminResumoCount').textContent = '(0/200)';
-      document.getElementById('adminOk').style.display = 'block';
-      setTimeout(() => document.getElementById('adminOk').style.display = 'none', 3000);
-      renderNotas();
-      renderAdminListaNotas();
-    }
 
     function renderAdminListaNotas() {
       const salvas = ls('pajeu_notas', []);
@@ -3172,6 +3125,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     window.publicarAtividade = async function() {
       const titulo    = document.getElementById('atividadeTitulo').value.trim();
       const descricao = document.getElementById('atividadeDescricao').value.trim();
+      const corpo = document.getElementById('atividadeCorpo').innerHTML.trim();
       const data      = document.getElementById('atividadeData').value;
       if (!titulo) return;
 
