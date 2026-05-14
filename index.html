@@ -3086,6 +3086,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
           ? partEl.value.split('\n').map(n => n.trim()).filter(Boolean)
           : []
       };
+    ]);
 
       await addDoc(colAtividades, {
         titulo,
