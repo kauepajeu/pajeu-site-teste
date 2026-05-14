@@ -3138,6 +3138,32 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
               <textarea id="editAtvDesc_${i}" style="min-height:100px">${atv.descricao || ''}</textarea>
               <label>Data</label>
               <input type="date" id="editAtvData_${i}" value="${atv.data || ''}" />
+              <h4 style="font-family:var(--font-display);color:var(--ouro);font-size:1rem;letter-spacing:.1em;text-transform:uppercase;margin:1rem 0 .5rem">
+                Certificados
+              </h4>
+              
+              ${(atv.certificados || []).map((c, ci) => `
+                <div style="border:1px solid rgba(232,184,75,.25);padding:1rem;margin-bottom:1rem;background:rgba(255,255,255,.04)">
+              
+                  <label>Carga horária</label>
+                  <input type="text" id="editAtvCertCarga_${i}_${ci}" value="${(c.cargaHoraria || '').replace(/"/g,'&quot;')}" />
+              
+                  <label>Texto do certificado</label>
+                  <div class="rte-toolbar">
+                    <button type="button" onclick="certEditCmd(${i}, ${ci}, 'bold')"><b>N</b></button>
+                    <button type="button" onclick="certEditCmd(${i}, ${ci}, 'italic')"><i>I</i></button>
+                  </div>
+              
+                  <div id="editAtvCertTexto_${i}_${ci}" class="rte-editor" contenteditable="true"
+                    style="min-height:120px;max-height:220px">
+                    ${c.texto || ''}
+                  </div>
+              
+                  <label>Participantes</label>
+                  <textarea id="editAtvCertParticipantes_${i}_${ci}" style="min-height:120px">${(c.participantes || []).join('\n')}</textarea>
+              
+                </div>
+              `).join('')}
               <button class="btn btn-ouro" style="font-size:.78rem;padding:.5rem 1.1rem" onclick="salvarEdicaoAtividade('${atv.id}', ${i})">💾 Salvar</button>
             </div>
           </div>
@@ -3149,18 +3175,44 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       const el = document.getElementById(`editAtv_${i}`);
       if (el) el.classList.toggle('aberto');
     }
+    function certEditCmd(i, ci, cmd) {
+      const editor = document.getElementById(`editAtvCertTexto_${i}_${ci}`);
+      if (!editor) return;
+    
+      editor.focus();
+      document.execCommand(cmd, false, null);
+    }
 
     function salvarEdicaoAtividade(id, i) {
       const salvas = ls('pajeu_atividades', []);
       const idx = salvas.findIndex(a => a.id === id);
       if (idx === -1) return;
-      salvas[idx].titulo    = document.getElementById(`editAtvTitulo_${i}`).value.trim();
+    
+      salvas[idx].titulo = document.getElementById(`editAtvTitulo_${i}`).value.trim();
       salvas[idx].descricao = document.getElementById(`editAtvDesc_${i}`).value.trim();
-      salvas[idx].data      = document.getElementById(`editAtvData_${i}`).value;
+      salvas[idx].data = document.getElementById(`editAtvData_${i}`).value;
+    
+      salvas[idx].certificados = (salvas[idx].certificados || []).map((c, ci) => {
+        const cargaEl = document.getElementById(`editAtvCertCarga_${i}_${ci}`);
+        const textoEl = document.getElementById(`editAtvCertTexto_${i}_${ci}`);
+        const partEl  = document.getElementById(`editAtvCertParticipantes_${i}_${ci}`);
+    
+        return {
+          ...c,
+          cargaHoraria: cargaEl ? cargaEl.value.trim() : (c.cargaHoraria || ''),
+          texto: textoEl ? textoEl.innerHTML.trim() : (c.texto || ''),
+          participantes: partEl
+            ? partEl.value.split('\n').map(n => n.trim()).filter(Boolean)
+            : (c.participantes || [])
+        };
+      });
+    
       lsSet('pajeu_atividades', salvas);
       renderAdminListaAtividades();
+    
+      alert('Atividade atualizada com sucesso!');
     }
-
+    
     function excluirAtividade(id) {
       if (!confirm('Excluir esta atividade?')) return;
       const salvas = ls('pajeu_atividades', []);
