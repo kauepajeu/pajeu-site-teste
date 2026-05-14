@@ -3066,7 +3066,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       if (el) el.remove();
     }
 
-    async function publicarAtividade() {
+    window.publicarAtividade = async function() {
       const titulo    = document.getElementById('atividadeTitulo').value.trim();
       const descricao = document.getElementById('atividadeDescricao').value.trim();
       const data      = document.getElementById('atividadeData').value;
@@ -3112,9 +3112,9 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       setTimeout(() => ok.style.display = 'none', 3000);
 
       renderAdminListaAtividades();
-    }
+    };
 
-    async function renderAdminListaAtividades() {
+    window.renderAdminListaAtividades = async function() {
       const snap = await getDocs(colAtividades);
 
       const salvas = snap.docs.map(doc => ({
@@ -3178,11 +3178,11 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       }).join('');
     }
 
-    function toggleEditarAtividade(i) {
+    window.toggleEditarAtividade = function(i) {
       const el = document.getElementById(`editAtv_${i}`);
       if (el) el.classList.toggle('aberto');
     }
-    function certEditCmd(i, ci, cmd) {
+    window.certEditCmd = function(i, ci, cmd) {
       const editor = document.getElementById(`editAtvCertTexto_${i}_${ci}`);
       if (!editor) return;
     
@@ -3190,7 +3190,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       document.execCommand(cmd, false, null);
     }
 
-    async function salvarEdicaoAtividade(id, i) {
+    window.salvarEdicaoAtividade = async function(id, i) {
 
       const titulo = document.getElementById(`editAtvTitulo_${i}`).value.trim();
       const descricao = document.getElementById(`editAtvDesc_${i}`).value.trim();
@@ -3240,7 +3240,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       alert('Atividade atualizada com sucesso!');
     }
     
-    async function excluirAtividade(id) {
+    window.excluirAtividade = async function(id) {
       if (!confirm('Excluir esta atividade?')) return;
     
       await deleteDoc(doc(db, 'atividades', id));
