@@ -250,29 +250,33 @@
       </div>
     ` : ''}
   
-    <section class="certificados">
-      <h2>Certificados</h2>
+    <section class="atividade-certs">
+      <h2>CERTIFICADOS</h2>
   
       ${(atividade.certificados || []).map((c, i) => `
         <div class="cert-card">
-          <strong>Certificado ${i + 1}</strong>
+          <div>
+            <strong>Certificado ${i + 1}</strong>
   
-          <p>Carga horária: ${c.cargaHoraria || '-'}</p>
+          <div style="opacity:.7;margin-top:.36;rem">
+            <p>Carga horária: ${c.cargaHoraria || '-'}</p>
+          </div>
+        </div>
   
+        <div class="cert-validar">
           <input
             type="text"
             id="nome_${i}"
             placeholder="Digite seu nome completo"
           >
-  
           <button onclick="abrirCertificado(${i})">
-            Abrir certificado
-          </button>
-        </div>
-      `).join('')}
-    </section>
-  `;
-  
+          ABRIR CERTIFICADO
+        </button>
+      </div>
+    </div>
+  `).join('')}
+</section>
+
   window.abrirCertificado = function(i) {
     const nome = document.getElementById(`nome_${i}`).value.trim();
   
