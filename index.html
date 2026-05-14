@@ -3071,15 +3071,25 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       if (!titulo) return;
 
       const fotos = _atividadeFotos.filter(Boolean);
-      const certs = _atividadeCerts.filter(Boolean).map((c, i) => ({
-        img:   c.img,
-        texto: document.getElementById(`certTexto_${i}`) ? document.getElementById(`certTexto_${i}`).value.trim() : c.texto
-      }));
+      const certificados = _atividadeCerts.filter(Boolean).map((c, i) => {
+      const textoEl = document.getElementById(`certTexto_${i}`);
+      const cargaEl = document.getElementById(`certCarga_${i}`);
+      const partEl  = document.getElementById(`certParticipantes_${i}`);
+    
+      return {
+        img: c.img || '',
+        cargaHoraria: cargaEl ? cargaEl.value.trim() : '',
+        texto: textoEl ? textoEl.innerHTML.trim() : '',
+        participantes: partEl
+          ? partEl.value.split('\n').map(n => n.trim()).filter(Boolean)
+          : []
+      };
+    });
 
       const salvas = ls('pajeu_atividades', []);
       salvas.push({
         id: 'atv_' + Date.now(),
-        titulo, descricao, data, fotos, certs,
+        titulo, descricao, data, fotos, certificados,
         criadoEm: new Date().toISOString()
       });
       lsSet('pajeu_atividades', salvas);
