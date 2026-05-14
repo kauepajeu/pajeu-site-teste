@@ -112,10 +112,43 @@
       gap:1rem;
     }
 
-    .cert{
+    .cert {
       background:#fffaf3;
       border-left:4px solid var(--bordo);
-      padding:1.2rem;
+      padding:1.4rem 1.6rem;
+      margin-bottom:1.25rem;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:1rem;
+      align-items:center;
+    }
+    
+    .cert-validar {
+      display:flex;
+      gap:.7rem;
+      align-items:center;
+    }
+    
+    .cert-validar input {
+      min-width:280px;
+      padding:.8rem .9rem;
+      border:1px solid #d7c7b6;
+      background:#fff;
+      color:var(--texto);
+      font-family:var(--font-body);
+      font-size:.95rem;
+    }
+    
+    .cert-validar input:focus {
+      outline:none;
+      border-color:var(--bordo);
+    }
+    
+    .cert-validar .btn {
+      background:var(--bordo);
+      color:#fff;
+      padding:.9rem 1.2rem;
+      white-space:nowrap;
     }
 
     .cert-top{
