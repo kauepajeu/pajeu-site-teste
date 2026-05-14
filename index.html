@@ -1289,6 +1289,7 @@
         <button class="admin-tab-btn" onclick="abrirTab('tabQuemSomos', this)">👥 Quem Somos</button>
         <button class="admin-tab-btn" onclick="abrirTab('tabHero', this)">🏠 Hero</button>
         <button class="admin-tab-btn" onclick="abrirTab('tabCategorias', this)">🏷 Categorias</button>
+        <button class="admin-tab-btn" onclick="abrirTab('tabAtividades', this)">🗓 Atividades</button>
       </div>
 
       <!-- ABA: NOTAS POLÍTICAS -->
@@ -1548,6 +1549,71 @@
         </div>
       </div>
 
+      <!-- ABA: ATIVIDADES -->
+      <div id="tabAtividades" class="admin-secao">
+        <div class="admin-form">
+          <h3 style="font-family:var(--font-display);color:var(--ouro);font-size:1.15rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.5rem">
+            Cadastrar Atividade
+          </h3>
+
+          <!-- Título -->
+          <div>
+            <label>Título</label>
+            <input type="text" id="atividadeTitulo" placeholder="Título da atividade" />
+          </div>
+
+          <!-- Descrição -->
+          <div>
+            <label>Descrição</label>
+            <textarea id="atividadeDescricao" style="min-height:120px" placeholder="Descreva a atividade..."></textarea>
+          </div>
+
+          <!-- Data -->
+          <div>
+            <label>Data</label>
+            <input type="date" id="atividadeData" />
+          </div>
+
+          <!-- Fotos -->
+          <div>
+            <label>Fotos da Atividade</label>
+            <div id="atividadeFotosLista" style="display:flex;flex-wrap:wrap;gap:.75rem;margin-bottom:.75rem"></div>
+            <label for="atividadeFotoInput" class="btn btn-outline" style="cursor:pointer;display:inline-block;font-size:.75rem;padding:.55rem 1.1rem">
+              + Adicionar Foto
+            </label>
+            <input type="file" id="atividadeFotoInput" accept="image/*" multiple style="display:none" onchange="atividadeAdicionarFotos(this)" />
+          </div>
+
+          <!-- Separador Certificados -->
+          <div style="border-top:1px solid rgba(232,184,75,.25);padding-top:1.25rem;margin-top:.5rem">
+            <h4 style="font-family:var(--font-display);color:var(--ouro);font-size:1rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1rem">
+              Certificados da Atividade
+            </h4>
+
+            <!-- Lista de certificados já adicionados -->
+            <div id="atividadeCertsLista" style="display:flex;flex-direction:column;gap:1rem;margin-bottom:1rem"></div>
+
+            <!-- Botão para adicionar novo certificado -->
+            <button type="button" onclick="atividadeAdicionarCert()" class="btn btn-outline" style="font-size:.75rem;padding:.55rem 1.2rem;color:var(--ouro);border-color:rgba(232,184,75,.5)">
+              + Adicionar Certificado
+            </button>
+          </div>
+
+          <button onclick="publicarAtividade()" class="btn btn-ouro" style="margin-top:.75rem">
+            Publicar Atividade
+          </button>
+          <p id="atividadeOk" style="color:#5ec45e;display:none;font-family:var(--font-ui);font-size:.85rem">✓ Atividade cadastrada com sucesso!</p>
+        </div>
+
+        <!-- Lista de atividades cadastradas -->
+        <div class="admin-posts" style="max-width:700px;margin:2rem auto 0">
+          <h3 style="font-family:var(--font-display);color:var(--ouro);font-size:1.1rem;letter-spacing:.1em;text-transform:uppercase;border-bottom:1px solid rgba(232,184,75,.3);padding-bottom:.5rem;margin-bottom:1rem">
+            Atividades Cadastradas
+          </h3>
+          <div id="adminListaAtividades"></div>
+        </div>
+      </div>
+
     </div><!-- /adminConteudo -->
   </div><!-- /admin-panel -->
 
@@ -1631,6 +1697,7 @@
           preencherCamposHero();
           preencherSelectCategorias();
           renderAdminListaCats();
+          renderAdminListaAtividades();
       
         } else {
       
@@ -2849,6 +2916,203 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       lsSet('pajeu_notas', salvas);
       renderNotas();
       renderAdminListaNotas();
+    }
+
+    /* ============================================================
+       ADMIN — ATIVIDADES
+    ============================================================ */
+
+    // Armazena as fotos (base64) da atividade em edição
+    let _atividadeFotos = [];
+
+    // Armazena os certificados ({ img: base64|'', texto: '' }) em edição
+    let _atividadeCerts = [];
+
+    // Contador para IDs únicos dos itens de certificado no DOM
+    let _certIdx = 0;
+
+    function atividadeAdicionarFotos(input) {
+      const files = Array.from(input.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const base64 = e.target.result;
+          _atividadeFotos.push(base64);
+          const lista = document.getElementById('atividadeFotosLista');
+          const wrap = document.createElement('div');
+          wrap.style.cssText = 'position:relative;width:90px;height:90px;';
+          const idx = _atividadeFotos.length - 1;
+          wrap.innerHTML = `
+            <img src="${base64}" style="width:90px;height:90px;object-fit:cover;border:1px solid rgba(232,184,75,.3);" />
+            <button onclick="atividadeRemoverFoto(${idx}, this.parentElement)"
+              style="position:absolute;top:2px;right:2px;background:rgba(160,21,21,.85);color:#fff;border:none;width:20px;height:20px;cursor:pointer;font-size:.75rem;line-height:1;padding:0">✕</button>
+          `;
+          lista.appendChild(wrap);
+        };
+        reader.readAsDataURL(file);
+      });
+      input.value = '';
+    }
+
+    function atividadeRemoverFoto(idx, el) {
+      _atividadeFotos[idx] = null;
+      el.remove();
+    }
+
+    function atividadeAdicionarCert() {
+      const id = _certIdx++;
+      _atividadeCerts.push({ img: '', texto: '' });
+      const lista = document.getElementById('atividadeCertsLista');
+      const item = document.createElement('div');
+      item.id = `certItem_${id}`;
+      item.style.cssText = 'background:rgba(255,255,255,.04);border:1px solid rgba(232,184,75,.2);padding:1rem;display:flex;flex-direction:column;gap:.65rem;';
+      item.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-family:var(--font-ui);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro)">Certificado ${id + 1}</span>
+          <button onclick="atividadeRemoverCert(${id})"
+            style="background:rgba(160,21,21,.6);color:var(--creme);border:none;font-family:var(--font-ui);font-size:.65rem;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .7rem;cursor:pointer">
+            Remover
+          </button>
+        </div>
+
+        <div>
+          <label style="font-family:var(--font-ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.3rem">
+            Imagem do Certificado
+          </label>
+          <div id="certImgPreview_${id}" style="margin-bottom:.5rem"></div>
+          <label for="certImgInput_${id}" class="btn btn-outline"
+            style="cursor:pointer;display:inline-block;font-size:.72rem;padding:.45rem .9rem;color:var(--creme2);border-color:rgba(232,184,75,.35)">
+            📎 Carregar Imagem
+          </label>
+          <input type="file" id="certImgInput_${id}" accept="image/*" style="display:none"
+            onchange="atividadeCertImg(${id}, this)" />
+        </div>
+
+        <div>
+          <label style="font-family:var(--font-ui);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ouro);display:block;margin-bottom:.3rem">
+            Texto do Certificado
+          </label>
+          <textarea id="certTexto_${id}" style="min-height:80px;background:rgba(255,255,255,.07);border:1px solid rgba(232,184,75,.3);color:var(--creme);padding:.65rem .9rem;width:100%;font-family:var(--font-body);font-size:.9rem;resize:vertical"
+            placeholder="Descreva o certificado ou insira o conteúdo..."
+            oninput="_atividadeCerts[${id}] && (_atividadeCerts[${id}].texto = this.value)"></textarea>
+        </div>
+      `;
+      lista.appendChild(item);
+    }
+
+    function atividadeCertImg(id, input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64 = e.target.result;
+        if (_atividadeCerts[id]) _atividadeCerts[id].img = base64;
+        const preview = document.getElementById(`certImgPreview_${id}`);
+        if (preview) {
+          preview.innerHTML = `<img src="${base64}" style="max-width:100%;max-height:140px;border:1px solid rgba(232,184,75,.3);display:block;margin-bottom:.3rem;" />`;
+        }
+      };
+      reader.readAsDataURL(file);
+      input.value = '';
+    }
+
+    function atividadeRemoverCert(id) {
+      if (_atividadeCerts[id]) _atividadeCerts[id] = null;
+      const el = document.getElementById(`certItem_${id}`);
+      if (el) el.remove();
+    }
+
+    function publicarAtividade() {
+      const titulo    = document.getElementById('atividadeTitulo').value.trim();
+      const descricao = document.getElementById('atividadeDescricao').value.trim();
+      const data      = document.getElementById('atividadeData').value;
+      if (!titulo) return;
+
+      const fotos = _atividadeFotos.filter(Boolean);
+      const certs = _atividadeCerts.filter(Boolean).map((c, i) => ({
+        img:   c.img,
+        texto: document.getElementById(`certTexto_${i}`) ? document.getElementById(`certTexto_${i}`).value.trim() : c.texto
+      }));
+
+      const salvas = ls('pajeu_atividades', []);
+      salvas.push({
+        id: 'atv_' + Date.now(),
+        titulo, descricao, data, fotos, certs,
+        criadoEm: new Date().toISOString()
+      });
+      lsSet('pajeu_atividades', salvas);
+
+      // Reset
+      document.getElementById('atividadeTitulo').value    = '';
+      document.getElementById('atividadeDescricao').value = '';
+      document.getElementById('atividadeData').value      = '';
+      document.getElementById('atividadeFotosLista').innerHTML = '';
+      document.getElementById('atividadeCertsLista').innerHTML = '';
+      _atividadeFotos = [];
+      _atividadeCerts = [];
+      _certIdx = 0;
+
+      const ok = document.getElementById('atividadeOk');
+      ok.style.display = 'block';
+      setTimeout(() => ok.style.display = 'none', 3000);
+
+      renderAdminListaAtividades();
+    }
+
+    function renderAdminListaAtividades() {
+      const salvas = ls('pajeu_atividades', []);
+      const lista  = document.getElementById('adminListaAtividades');
+      if (!lista) return;
+      if (!salvas.length) {
+        lista.innerHTML = '<p style="color:var(--creme2);opacity:.5;font-size:.85rem">Nenhuma atividade cadastrada.</p>';
+        return;
+      }
+      lista.innerHTML = salvas.map((atv, i) => {
+        const dataFmt = atv.data ? new Date(atv.data + 'T12:00:00').toLocaleDateString('pt-BR') : '—';
+        return `
+          <div>
+            <div class="admin-post-item">
+              <span style="color:var(--creme)">${atv.titulo} <small style="opacity:.55;font-size:.75rem">${dataFmt}</small></span>
+              <div class="admin-item-btns">
+                <button class="btn-editar" onclick="toggleEditarAtividade(${i})">Editar</button>
+                <button class="btn-excluir" onclick="excluirAtividade('${atv.id}')">Excluir</button>
+              </div>
+            </div>
+            <div class="admin-editar-area" id="editAtv_${i}">
+              <label>Título</label>
+              <input type="text" id="editAtvTitulo_${i}" value="${atv.titulo.replace(/"/g,'&quot;')}" />
+              <label>Descrição</label>
+              <textarea id="editAtvDesc_${i}" style="min-height:100px">${atv.descricao || ''}</textarea>
+              <label>Data</label>
+              <input type="date" id="editAtvData_${i}" value="${atv.data || ''}" />
+              <button class="btn btn-ouro" style="font-size:.78rem;padding:.5rem 1.1rem" onclick="salvarEdicaoAtividade('${atv.id}', ${i})">💾 Salvar</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleEditarAtividade(i) {
+      const el = document.getElementById(`editAtv_${i}`);
+      if (el) el.classList.toggle('aberto');
+    }
+
+    function salvarEdicaoAtividade(id, i) {
+      const salvas = ls('pajeu_atividades', []);
+      const idx = salvas.findIndex(a => a.id === id);
+      if (idx === -1) return;
+      salvas[idx].titulo    = document.getElementById(`editAtvTitulo_${i}`).value.trim();
+      salvas[idx].descricao = document.getElementById(`editAtvDesc_${i}`).value.trim();
+      salvas[idx].data      = document.getElementById(`editAtvData_${i}`).value;
+      lsSet('pajeu_atividades', salvas);
+      renderAdminListaAtividades();
+    }
+
+    function excluirAtividade(id) {
+      if (!confirm('Excluir esta atividade?')) return;
+      const salvas = ls('pajeu_atividades', []);
+      lsSet('pajeu_atividades', salvas.filter(a => a.id !== id));
+      renderAdminListaAtividades();
     }
 
     /* ============================================================
