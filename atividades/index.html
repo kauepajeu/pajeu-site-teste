@@ -436,7 +436,7 @@
         const foto = primeiraFoto(a);
 
         return `
-          <a class="card" href="atividade.html?id=${encodeURIComponent(a.id)}">
+          <a class="card" href="atividade.html?id=${encodeURIComponent(a.firestoreId)}">
             ${foto ? `<img src="${foto}" alt="Imagem da atividade" class="card-img">` : ""}
 
             <div class="card-body">
