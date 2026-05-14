@@ -3114,8 +3114,13 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       renderAdminListaAtividades();
     }
 
-    function renderAdminListaAtividades() {
-      const salvas = ls('pajeu_atividades', []);
+    async function renderAdminListaAtividades() {
+      const snap = await getDocs(colAtividades);
+
+      const salvas = snap.docs.map(doc => ({
+        firestoreId: doc.id,
+        ...doc.data()
+      }));
       const lista  = document.getElementById('adminListaAtividades');
       if (!lista) return;
       if (!salvas.length) {
@@ -3130,7 +3135,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
               <span style="color:var(--creme)">${atv.titulo} <small style="opacity:.55;font-size:.75rem">${dataFmt}</small></span>
               <div class="admin-item-btns">
                 <button class="btn-editar" onclick="toggleEditarAtividade(${i})">Editar</button>
-                <button class="btn-excluir" onclick="excluirAtividade('${atv.id}')">Excluir</button>
+                <button class="btn-excluir" onclick="excluirAtividade('${atv.firestoreId}')">Excluir</button>
               </div>
             </div>
             <div class="admin-editar-area" id="editAtv_${i}">
@@ -3166,7 +3171,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
               
                 </div>
               `).join('')}
-              <button class="btn btn-ouro" style="font-size:.78rem;padding:.5rem 1.1rem" onclick="salvarEdicaoAtividade('${atv.id}', ${i})">💾 Salvar</button>
+              <button class="btn btn-ouro" style="font-size:.78rem;padding:.5rem 1.1rem" onclick="salvarEdicaoAtividade('${atv.firestoreId}', ${i})">💾 Salvar</button>
             </div>
           </div>
         `;
@@ -3185,40 +3190,61 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       document.execCommand(cmd, false, null);
     }
 
-    function salvarEdicaoAtividade(id, i) {
-      const salvas = ls('pajeu_atividades', []);
-      const idx = salvas.findIndex(a => a.id === id);
-      if (idx === -1) return;
+    async function salvarEdicaoAtividade(id, i) {
+
+      const titulo = document.getElementById(`editAtvTitulo_${i}`).value.trim();
+      const descricao = document.getElementById(`editAtvDesc_${i}`).value.trim();
+      const data = document.getElementById(`editAtvData_${i}`).value;
     
-      salvas[idx].titulo = document.getElementById(`editAtvTitulo_${i}`).value.trim();
-      salvas[idx].descricao = document.getElementById(`editAtvDesc_${i}`).value.trim();
-      salvas[idx].data = document.getElementById(`editAtvData_${i}`).value;
+      const atividadeSnap = await getDoc(doc(db, 'atividades', id));
+      if (!atividadeSnap.exists()) return;
     
-      salvas[idx].certificados = (salvas[idx].certificados || []).map((c, ci) => {
+      const atividade = atividadeSnap.data();
+    
+      const certificados = (atividade.certificados || []).map((c, ci) => {
+    
         const cargaEl = document.getElementById(`editAtvCertCarga_${i}_${ci}`);
         const textoEl = document.getElementById(`editAtvCertTexto_${i}_${ci}`);
-        const partEl  = document.getElementById(`editAtvCertParticipantes_${i}_${ci}`);
+        const partEl = document.getElementById(`editAtvCertParticipantes_${i}_${ci}`);
     
         return {
           ...c,
-          cargaHoraria: cargaEl ? cargaEl.value.trim() : (c.cargaHoraria || ''),
-          texto: textoEl ? textoEl.innerHTML.trim() : (c.texto || ''),
+    
+          cargaHoraria: cargaEl
+            ? cargaEl.value.trim()
+            : (c.cargaHoraria || ''),
+    
+          texto: textoEl
+            ? textoEl.innerHTML.trim()
+            : (c.texto || ''),
+    
           participantes: partEl
-            ? partEl.value.split('\n').map(n => n.trim()).filter(Boolean)
+            ? partEl.value
+                .split('\n')
+                .map(n => n.trim())
+                .filter(Boolean)
             : (c.participantes || [])
         };
+    
       });
     
-      lsSet('pajeu_atividades', salvas);
+      await updateDoc(doc(db, 'atividades', id), {
+        titulo,
+        descricao,
+        data,
+        certificados
+      });
+    
       renderAdminListaAtividades();
     
       alert('Atividade atualizada com sucesso!');
     }
     
-    function excluirAtividade(id) {
+    async function excluirAtividade(id) {
       if (!confirm('Excluir esta atividade?')) return;
-      const salvas = ls('pajeu_atividades', []);
-      lsSet('pajeu_atividades', salvas.filter(a => a.id !== id));
+    
+      await deleteDoc(doc(db, 'atividades', id));
+    
       renderAdminListaAtividades();
     }
 
