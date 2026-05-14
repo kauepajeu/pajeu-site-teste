@@ -1581,10 +1581,10 @@
               <button type="button" onclick="atividadeTextoCmd('justifyRight')">➡</button>
               <button type="button" onclick="atividadeTextoCmd('justifyFull')">≡</button>
               <span class="rte-sep"></span>
-              <button type="button" title="Aumentar recuo" onclick="atividadeRecuoPrimeiraLinha('true')">⇥</button>
-              <button type="button" title="Aumentar recuo" onclick="atividadeRecuoPrimeiralinha('false')">⇥</button>
+              <button type="button" title="Aplicar recuo na primeira linha" onclick="atividadeRecuoPrimeiraLinha('true')">⇥</button>
+              <button type="button" title="Remover recuo da primeira linha" onclick="atividadeRecuoPrimeiralinha('false')">⇤</button>
             </div>
-          
+        
             <div
               id="atividadeCorpo"
               class="rte-editor"
@@ -3121,21 +3121,30 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       document.execCommand(cmd, false, null);
     };
 
-    window.atividadeRecuoPrimeiraLinha = function(aplicar = true) {
+    window.atividadeRecuoPrimeiraLinha = function(aplicar) {
+      const editor = document.getElementById('atividadeCorpo');
       const sel = window.getSelection();
     
-      if (!sel.rangeCount) return;
+      if (!editor || !sel || !sel.rangeCount) return;
     
       let node = sel.anchorNode;
     
-      while (node && node !== document.body) {
-        if (node.nodeType === 1) {
+      if (node.nodeType === 3) {
+        node = node.parentElement;
+      }
+    
+      while (node && node !== editor) {
+        const tag = node.tagName ? node.tagName.toLowerCase() : '';
+    
+        if (['p', 'div', 'li', 'blockquote'].includes(tag)) {
           node.style.textIndent = aplicar ? '2em' : '0';
-          break;
+          return;
         }
     
-        node = node.parentNode;
+        node = node.parentElement;
       }
+    
+      editor.style.textIndent = aplicar ? '2em' : '0';
     };
 
 
