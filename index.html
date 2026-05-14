@@ -1497,7 +1497,6 @@
             <textarea id="qsP4" style="min-height:90px"></textarea>
           </div>
           <button onclick="salvarQuemSomos()" class="btn btn-ouro" style="margin-top:.5rem">Salvar Alterações</button>
-          <button onclick="resetarQuemSomos()" style="margin-top:.5rem;background:transparent;border:1px solid rgba(232,184,75,.3);color:var(--creme2);font-family:var(--font-ui);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:.6rem 1rem;cursor:pointer">Restaurar padrão</button>
           <p id="qsOk" style="color:#5ec45e;display:none;font-family:var(--font-ui);font-size:.85rem">✓ Texto atualizado com sucesso!</p>
         </div>
       </div>
@@ -1521,7 +1520,6 @@
             <textarea id="heroSub" style="min-height:80px" placeholder="Descrição abaixo do título..."></textarea>
           </div>
           <button onclick="salvarHero()" class="btn btn-ouro" style="margin-top:.5rem">Salvar Hero</button>
-          <button onclick="resetarHero()" style="margin-top:.5rem;background:transparent;border:1px solid rgba(232,184,75,.3);color:var(--creme2);font-family:var(--font-ui);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:.6rem 1rem;cursor:pointer">Restaurar padrão</button>
           <p id="heroOk" style="color:#5ec45e;display:none;font-family:var(--font-ui);font-size:.85rem">✓ Hero atualizado!</p>
         </div>
       </div>
@@ -2165,7 +2163,6 @@
     /* ============================================================
        CONSTANTES
     ============================================================ */
-    const SENHA_ADMIN = 'pajeu2025';
     /* ID da planilha Google Sheets (para o Apps Script) */
     const SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwQ7ACvG_LkafCnfA9pw6TkiltVaSwzm-98TdLcs4L81_-DlymzOod37Cwr8NzkHSIQJg/exec';
 
@@ -2173,19 +2170,6 @@
     const NOTAS_INICIAIS = [];
 
     const DOCS_INICIAIS = [];
-
-    const QS_PADRAO = [
-      'O Pajeú é um movimento de juventude ecossocialista que nasce do encontro entre a luta socioambiental e os interesses da classe trabalhadora, das mulheres, dos povos originários, negros, LGBTQIAPN+ e de todos os oprimidos.',
-      'Nosso nome homenageia um guerreiro negro liberto, estrategista e defensor de Canudos — símbolo da revolta popular contra o Estado e o latifúndio. Resistência em Movimento, pois a história não se encerra.',
-      'Pajeú utilizava as características do território para resistir frente ao poder do Estado. Também nós utilizaremos nossos territórios para enfrentar os capitalistas!',
-      'Nossa luta atravessa a fronteira dos Estado-nação, somos internacionalistas solidários a todos os povos oprimidos do mundo. 🌐'
-    ];
-
-    const HERO_PADRAO = {
-      l1: 'Ousar Lutar,',
-      l2: 'Ousar Vencer!',
-      sub: 'Somos um movimento de juventude ecossocialista que conecta a luta socioambiental com os interesses da classe trabalhadora. Raiz popular, horizonte revolucionário.'
-    };
 
     /* ============================================================
        HELPERS
@@ -3342,7 +3326,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
        ADMIN — QUEM SOMOS
     ============================================================ */
     function preencherCamposQuemSomos() {
-      const textos = window._quemSomosCache || ls('pajeu_qs', QS_PADRAO);
+      const textos = window._quemSomosCache || ls('pajeu_qs');
       textos.forEach((t, i) => {
         const el = document.getElementById(`qsP${i+1}`);
         if (el) el.value = t;
@@ -3352,17 +3336,12 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
       // Delegado ao Firebase — esta função é sobrescrita pelo script module
       // Mantida aqui apenas como fallback
     }
-    function resetarQuemSomos() {
-      window._quemSomosCache = QS_PADRAO;
-      preencherCamposQuemSomos();
-      renderQuemSomos();
-    }
 
     /* ============================================================
        ADMIN — HERO
     ============================================================ */
     function preencherCamposHero() {
-      const hero = window._heroCache || ls('pajeu_hero', HERO_PADRAO);
+      const hero = window._heroCache || ls('pajeu_hero');
       document.getElementById('heroL1').value  = hero.l1;
       document.getElementById('heroL2').value  = hero.l2;
       document.getElementById('heroSub').value = hero.sub;
@@ -3370,12 +3349,7 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     function salvarHero() {
       // Delegado ao Firebase — sobrescrito pelo script module
     }
-    function resetarHero() {
-      window._heroCache = HERO_PADRAO;
-      preencherCamposHero();
-      renderHero();
-    }
-
+    
     /* ============================================================
        FORMULÁRIO — ORGANIZE-SE (Google Sheets via Apps Script)
     ============================================================ */
