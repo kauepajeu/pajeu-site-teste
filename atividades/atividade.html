@@ -250,31 +250,34 @@
       </div>
     ` : ''}
   
-    <section class="cert">
-      <h2>CERTIFICADOS</h2>
-  
-      ${(atividade.certificados || []).map((c, i) => `
-        <div class="cert">
-          <div>
-            <strong>Certificado ${i + 1}</strong>
-  
-          <div style="opacity:.7;margin-top:.36rem">
-            <p>Carga horária: ${c.cargaHoraria || '-'}</p>
-          </div>
+    <section class="atividade-certs">
+  <h2 class="sec-title">CERTIFICADOS</h2>
+
+  ${((atividade.certificados || []).map((c, i) => `
+    <div class="cert">
+
+      <div>
+        <strong>Certificado ${i + 1}</strong>
+
+        <div class="carga">
+          <p>Carga horária: ${c.cargaHoraria || '--'}</p>
         </div>
-  
-        <div class="certs">
-          <input
-            type="text"
-            id="nome_${i}"
-            placeholder="Digite seu nome completo"
-          >
-          <button onclick="abrirCertificado(${i})">
+      </div>
+
+      <div class="cert-validar">
+        <input
+          type="text"
+          id="nome_${i}"
+          placeholder="Digite seu nome completo"
+        >
+
+        <button class="btn" onclick="abrirCertificado(${i})">
           ABRIR CERTIFICADO
         </button>
       </div>
+
     </div>
-  `).join('')}
+  `)).join('')}
 </section>
 `;
 
