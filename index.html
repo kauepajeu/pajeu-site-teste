@@ -1581,8 +1581,8 @@
               <button type="button" onclick="atividadeTextoCmd('justifyRight')">➡</button>
               <button type="button" onclick="atividadeTextoCmd('justifyFull')">≡</button>
               <span class="rte-sep"></span>
-              <button type="button" title="Aumentar recuo" onclick="atividadeTextoCmd('')">⇥</button>
-              <button type="button" title="Diminuir recuo" onclick="atividadeTextoCmd('')">⇤</button>
+              <button type="button" title="Aumentar recuo" onclick="atividadeRecuoPrimeiraLinha('true')">⇥</button>
+              <button type="button" title="Aumentar recuo" onclick="atividadeRecuoPrimeiralinha('false')">⇥</button>
             </div>
           
             <div
@@ -3119,6 +3119,23 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
     
       editor.focus();
       document.execCommand(cmd, false, null);
+    };
+
+    window.atividadeRecuoPrimeiraLinha = function(aplicar = true) {
+      const sel = window.getSelection();
+    
+      if (!sel.rangeCount) return;
+    
+      let node = sel.anchorNode;
+    
+      while (node && node !== document.body) {
+        if (node.nodeType === 1) {
+          node.style.textIndent = aplicar ? '2em' : '0';
+          break;
+        }
+    
+        node = node.parentNode;
+      }
     };
 
 
