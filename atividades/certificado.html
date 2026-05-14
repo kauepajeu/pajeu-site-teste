@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Certificado — Pajeú</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<style>
+@font-face{
+  font-family:'pajeutitulo';
+  src:url('../fonts/chinese rocks rg.otf') format('opentype');
+}
+
+@font-face{
+  font-family:'pajeutexto';
+  src:url('../fonts/Montserrat-Regular.otf') format('opentype');
+  font-weight:400;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'pajeutexto';
+  src:url('../fonts/Montserrat-Bold.otf') format('opentype');
+  font-weight:700;
+  font-style:normal;
+}
+
+@font-face{
+  font-family:'pajeutexto';
+  src:url('../fonts/Montserrat-Italic.otf') format('opentype');
+  font-weight:400;
+  font-style:italic;
+}
+
+@font-face{
+  font-family:'pajeutexto';
+  src:url('../fonts/Montserrat-BoldItalic.otf') format('opentype');
+  font-weight:700;
+  font-style:italic;
+}
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#e9e2d6;
+  font-family:'pajeutexto',sans-serif;
+  padding:2rem;
+}
+
+.cert-wrap{
+  max-width:1400px;
+  margin:auto;
+}
+
+.certificado{
+  position:relative;
+  width:min(100%, 1123px);
+  aspect-ratio:297 / 210;
+  margin:0 auto;
+  background:#fff;
+  overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
+}
+
+.cert-bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.cert-conteudo{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 13%;
+}
+
+.cert-texto{
+  width:70%;
+  max-width:760px;
+  line-height:1.8;
+  color:#2d1111;
+  font-size:clamp(1rem,1.55vw,1.35rem);
+  text-align:justify;
+  text-align-last:center;
+  font-family:'pajeutexto',sans-serif;
+}
+
+.cert-texto strong,
+.cert-texto b{
+  font-weight:700;
+}
+
+.cert-texto em,
+.cert-texto i{
+  font-style:italic;
+}
+
+.qrcode{
+  position:absolute;
+  right:2rem;
+  bottom:2rem;
+  background:white;
+  padding:.5rem;
+}
+
+.validacao{
+  margin-top:1rem;
+  text-align:center;
+  color:#5a3030;
+  line-height:1.7;
+}
+
+.btns{
+  margin-top:2rem;
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+
+button{
+  border:none;
+  background:#7a0c0c;
+  color:white;
+  padding:1rem 1.2rem;
+  cursor:pointer;
+  font-family:'pajeutitulo',sans-serif;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+@page{
+  size:A4 landscape;
+  margin:0;
+}
+
+@media print{
+  body{
+    padding:0;
+    background:white;
+  }
+
+  .btns,
+  .validacao{
+    display:none;
+  }
+
+  .cert-wrap{
+    max-width:none;
+    margin:0;
+  }
+
+  .certificado{
+    width:297mm;
+    height:210mm;
+    box-shadow:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="cert-wrap">
+
+  <div class="certificado">
+
+    <img id="certBg" class="cert-bg">
+
+    <div class="cert-conteudo">
+      <div id="certTexto" class="cert-texto"></div>
+    </div>
+
+    <canvas id="qrcode" class="qrcode"></canvas>
+
+  </div>
+
+  <div class="validacao">
+    Certificado validável digitalmente através do QR Code.
+  </div>
+
+  <div class="btns">
+    <button onclick="window.print()">
+      Baixar / Imprimir
+    </button>
+  </div>
+
+</div>
+
+<script>
+function ls(key, fallback = []) {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+const params = new URLSearchParams(location.search);
+
+const atividadeId = params.get('id');
+const certIndex = Number(params.get('cert'));
+const nome = params.get('nome');
+
+const atividades = ls('pajeu_atividades', []);
+
+const atividade = atividades.find(a => a.id === atividadeId);
+
+if(!atividade){
+  alert('Atividade não encontrada.');
+  throw new Error('atividade');
+}
+
+const cert = atividade.certificados?.[certIndex];
+
+if(!cert){
+  alert('Certificado não encontrado.');
+  throw new Error('certificado');
+}
+
+function formatarData(data){
+  if(!data) return '';
+
+  return new Date(data + 'T00:00:00')
+    .toLocaleDateString('pt-BR');
+}
+
+let texto = cert.texto || '';
+
+texto = texto
+  .replaceAll('{nome}', nome || '')
+  .replaceAll('{atividade}', atividade.titulo || '')
+  .replaceAll('{data}', formatarData(atividade.data))
+  .replaceAll('{cargaHoraria}', cert.cargaHoraria || '');
+
+document.getElementById('certTexto').innerHTML = texto;
+
+if(cert.img){
+  document.getElementById('certBg').src = cert.img;
+} else {
+  document.getElementById('certBg').style.display = 'none';
+}
+
+QRCode.toCanvas(
+  document.getElementById('qrcode'),
+  window.location.href,
+  {
+    width:120,
+    margin:1
+  }
+);
+</script>
+
+</body>
+</html>
