@@ -270,18 +270,130 @@
     <div id="atividadesGrid" class="grid"></div>
   </main>
 
-  <script>
-    const grid = document.getElementById("atividadesGrid");
-    const busca = document.getElementById("buscaAtividades");
-
-    function ls(key, fallback = []) {
-      try {
-        return JSON.parse(localStorage.getItem(key)) || fallback;
-      } catch {
-        return fallback;
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        orderBy,
+        query
+      } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+      
+      const firebaseConfig = {
+        apiKey: "SUA_API_KEY",
+        authDomain: "SEU_DOMINIO.firebaseapp.com",
+        projectId: "SEU_PROJECT_ID",
+        storageBucket: "SEU_BUCKET.appspot.com",
+        messagingSenderId: "SEU_MSG_ID",
+        appId: "SEU_APP_ID"
+      };
+      
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      
+      const grid = document.getElementById("atividadesGrid");
+      const busca = document.getElementById("buscaAtividades");
+      
+      let atividades = [];
+      
+      function formatarData(data) {
+        if (!data) return "";
+        const d = new Date(data + "T00:00:00");
+        if (isNaN(d)) return data;
+        return d.toLocaleDateString("pt-BR");
       }
-    }
+      
+      function primeiraFoto(atividade) {
+        return atividade.fotos && atividade.fotos.length ? atividade.fotos[0] : "";
+      }
+      
+      function textoBusca(atividade) {
+        return [
+          atividade.titulo || "",
+          atividade.descricao || "",
+          atividade.data || "",
+          ...(atividade.certificados || []).flatMap(c => [
+            c.cargaHoraria || "",
+            c.texto || "",
+            ...(c.participantes || [])
+          ])
+        ].join(" ").toLowerCase();
+      }
+      
+      function renderAtividades(lista) {
+        if (!lista.length) {
+          grid.innerHTML = `
+            <div class="vazio">
+              Nenhuma atividade encontrada.
+            </div>
+          `;
+          return;
+        }
+      
+        grid.innerHTML = lista.map(a => {
+          const foto = primeiraFoto(a);
+      
+          return `
+            <a class="card" href="atividade.html?id=${encodeURIComponent(a.firestoreId)}">
+              ${foto ? `<img src="${foto}" alt="Imagem da atividade" class="card-img">` : ""}
+      
+              <div class="card-body">
+                <div class="data">${a.data ? formatarData(a.data) : "Atividade"}</div>
+                <h2>${a.titulo || "Atividade sem título"}</h2>
+                <p class="desc">${a.descricao || "Sem descrição cadastrada."}</p>
+                <span class="ver">Ver atividade →</span>
+              </div>
+            </a>
+          `;
+        }).join("");
+      }
+      
+      window.filtrarAtividades = function() {
+        const termo = busca.value.trim().toLowerCase();
+      
+        if (!termo) {
+          renderAtividades(atividades);
+          return;
+        }
+      
+        const filtradas = atividades.filter(a => textoBusca(a).includes(termo));
+        renderAtividades(filtradas);
+      };
+      
+      async function carregarAtividades() {
+        grid.innerHTML = `
+          <div class="vazio">
+            Carregando atividades...
+          </div>
+        `;
+      
+        try {
+          const q = query(collection(db, "atividades"), orderBy("criadoEm", "desc"));
+          const snap = await getDocs(q);
+      
+          atividades = snap.docs.map(d => ({
+            firestoreId: d.id,
+            ...d.data()
+          }));
+      
+          renderAtividades(atividades);
+        } catch (e) {
+          console.error("Erro ao carregar atividades:", e);
+      
+          grid.innerHTML = `
+            <div class="vazio">
+              Não foi possível carregar as atividades.
+            </div>
+          `;
+        }
+      }
+      
+      carregarAtividades();
+</script>
 
+  <script>
     function formatarData(data) {
       if (!data) return "";
       const d = new Date(data + "T00:00:00");
