@@ -184,6 +184,107 @@
 
 </main>
 
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
+    authDomain: "pajeu-site-teste.firebaseapp.com",
+    projectId: "pajeu-site-teste",
+    storageBucket: "pajeu-site-teste.firebasestorage.app",
+    messagingSenderId: "803113381054",
+    appId: "1:803113381054:web:07e93476b8d129c96082ef",
+    measurementId: "G-9WVNK4CX8E"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  const conteudo = document.getElementById('conteudo');
+  
+  const snap = await getDoc(doc(db, 'atividades', id));
+  
+  if (!snap.exists()) {
+    conteudo.innerHTML = `
+      <div class="error">
+        Atividade não encontrada.
+      </div>
+    `;
+    throw new Error('atividade_nao_encontrada');
+  }
+  
+  const atividade = {
+    firestoreId: snap.id,
+    ...snap.data()
+  };
+  
+  function formatarData(data) {
+    if (!data) return '';
+    return new Date(data + 'T00:00:00').toLocaleDateString('pt-BR');
+  }
+  
+  conteudo.innerHTML = `
+    <div class="data">
+      ${formatarData(atividade.data)}
+    </div>
+  
+    <h1>${atividade.titulo || ''}</h1>
+  
+    <div class="descricao">
+      ${atividade.descricao || ''}
+    </div>
+  
+    ${(atividade.fotos || []).length ? `
+      <div class="galeria">
+        ${(atividade.fotos || []).map(f => `
+          <img src="${typeof f === 'string' ? f : f.url}" alt="">
+        `).join('')}
+      </div>
+    ` : ''}
+  
+    <section class="certificados">
+      <h2>Certificados</h2>
+  
+      ${(atividade.certificados || []).map((c, i) => `
+        <div class="cert-card">
+          <strong>Certificado ${i + 1}</strong>
+  
+          <p>Carga horária: ${c.cargaHoraria || '-'}</p>
+  
+          <input
+            type="text"
+            id="nome_${i}"
+            placeholder="Digite seu nome completo"
+          >
+  
+          <button onclick="abrirCertificado(${i})">
+            Abrir certificado
+          </button>
+        </div>
+      `).join('')}
+    </section>
+  `;
+  
+  window.abrirCertificado = function(i) {
+    const nome = document.getElementById(`nome_${i}`).value.trim();
+  
+    if (!nome) {
+      alert('Digite seu nome.');
+      return;
+    }
+  
+    location.href =
+      `certificado.html?id=${encodeURIComponent(id)}&cert=${i}&nome=${encodeURIComponent(nome)}`;
+  };
+</script>
 
   
 
