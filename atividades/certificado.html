@@ -199,125 +199,137 @@ button{
 
 </div>
 
-<script>
-function ls(key, fallback = []) {
-  try {
-    return JSON.parse(localStorage.getItem(key)) || fallback;
-  } catch {
-    return fallback;
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  
+  import {
+    getFirestore,
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
+  const firebaseConfig = {
+    apiKey: "AIzaSyDC97Kc50s_VY9Mx_3gtpkfYT9ewCIjqN4",
+    authDomain: "pajeu-site-teste.firebaseapp.com",
+    projectId: "pajeu-site-teste",
+    storageBucket: "pajeu-site-teste.firebasestorage.app",
+    messagingSenderId: "803113381054",
+    appId: "1:803113381054:web:07e93476b8d129c96082ef",
+    measurementId: "G-9WVNK4CX8E"
+  };
+  
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  
+  const params = new URLSearchParams(location.search);
+  
+  const atividadeId = params.get('id');
+  const certIndex = Number(params.get('cert'));
+  const nome = params.get('nome');
+  
+  const snap = await getDoc(doc(db, 'atividades', atividadeId));
+  
+  if (!snap.exists()) {
+    alert('Atividade não encontrada.');
+    throw new Error('atividade');
   }
-}
-
-const params = new URLSearchParams(location.search);
-
-const atividadeId = params.get('id');
-const certIndex = Number(params.get('cert'));
-const nome = params.get('nome');
-
-const atividades = ls('pajeu_atividades', []);
-
-const atividade = atividades.find(a => a.id === atividadeId);
-
-if(!atividade){
-  alert('Atividade não encontrada.');
-  throw new Error('atividade');
-}
-
-const cert = atividade.certificados?.[certIndex];
-
-if(!cert){
-  alert('Certificado não encontrado.');
-  throw new Error('certificado');
-}
-
-function normalizarNome(str){
-  return (str || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, ' ');
-}
-
-const participantes = cert.participantes || [];
-const nomeNormalizado = normalizarNome(nome);
-
-const autorizado = participantes.some(p => {
-  return normalizarNome(p) === nomeNormalizado;
-});
-
-if (!autorizado) {
-  document.body.innerHTML = `
-    <div style="
-      max-width:720px;
-      margin:4rem auto;
-      background:white;
-      padding:2rem;
-      border-left:5px solid #7a0c0c;
-      font-family:'pajeutexto', sans-serif;
-      color:#2d1111;
-      line-height:1.7;
-    ">
-      <h1 style="
-        font-family:'pajeutitulo', sans-serif;
-        color:#7a0c0c;
-        letter-spacing:.08em;
-        text-transform:uppercase;
-        margin-bottom:1rem;
+  
+  const atividade = snap.data();
+  const cert = atividade.certificados?.[certIndex];
+  
+  if (!cert) {
+    alert('Certificado não encontrado.');
+    throw new Error('certificado');
+  }
+  
+  function normalizarNome(str) {
+    return (str || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ');
+  }
+  
+  const participantes = cert.participantes || [];
+  const nomeNormalizado = normalizarNome(nome);
+  
+  const autorizado = participantes.some(p => {
+    return normalizarNome(p) === nomeNormalizado;
+  });
+  
+  if (!autorizado) {
+    document.body.innerHTML = `
+      <div style="
+        max-width:720px;
+        margin:4rem auto;
+        background:white;
+        padding:2rem;
+        border-left:5px solid #7a0c0c;
+        font-family:'pajeutexto', sans-serif;
+        color:#2d1111;
+        line-height:1.7;
       ">
-        Certificado não encontrado
-      </h1>
-
-      <p>
-        O nome informado não consta na lista de participantes desta atividade.
-      </p>
-
-      <p style="margin-top:1rem;font-size:.9rem;color:#6a4040">
-        Verifique se o nome foi digitado exatamente como consta na lista de presença.<br>Em caso de problemas entre em contato por e-mail com a regional responsável pela atividade, formação ou evento na aba de contatos. 
-      </p>
-
-      <p style="margin-top:1.5rem">
-        <a href="atividade.html?id=${encodeURIComponent(atividadeId)}" style="color:#7a0c0c;font-weight:700">
-          ← Voltar para a atividade
-        </a>
-      </p>
-    </div>
-  `;
-
-  throw new Error('participante_nao_autorizado');
-}
-
-function formatarData(data){
-  if(!data) return '';
-
-  return new Date(data + 'T00:00:00')
-    .toLocaleDateString('pt-BR');
-}
-
-let texto = cert.texto || '';
-
-texto = texto
-  .replaceAll('{nome}', nome || '')
-  .replaceAll('{atividade}', atividade.titulo || '')
-  .replaceAll('{data}', formatarData(atividade.data))
-  .replaceAll('{cargaHoraria}', cert.cargaHoraria || '');
-
-document.getElementById('certTexto').innerHTML = texto;
-
-if(cert.img){
-  document.getElementById('certBg').src = cert.img;
-} else {
-  document.getElementById('certBg').style.display = 'none';
-}
-
-QRCode.toCanvas(
-  document.getElementById('qrcode'),
-  window.location.href,
-  {
-    width:120,
-    margin:1
+        <h1 style="
+          font-family:'pajeutitulo', sans-serif;
+          color:#7a0c0c;
+          letter-spacing:.08em;
+          text-transform:uppercase;
+          margin-bottom:1rem;
+        ">
+          Certificado não encontrado
+        </h1>
+  
+        <p>
+          O nome informado não consta na lista de participantes desta atividade.
+        </p>
+  
+        <p style="margin-top:1rem;font-size:.9rem;color:#6a4040">
+          Verifique se o nome foi digitado exatamente como consta na lista de presença.
+        </p>
+  
+        <p style="margin-top:1.5rem">
+          <a href="atividade.html?id=${encodeURIComponent(atividadeId)}" style="color:#7a0c0c;font-weight:700">
+            ← Voltar para a atividade
+          </a>
+        </p>
+      </div>
+    `;
+  
+    throw new Error('participante_nao_autorizado');
   }
-);
+  
+  function formatarData(data) {
+    if (!data) return '';
+  
+    return new Date(data + 'T00:00:00')
+      .toLocaleDateString('pt-BR');
+  }
+  
+  let texto = cert.texto || '';
+  
+  texto = texto
+    .replaceAll('{nome}', nome || '')
+    .replaceAll('{atividade}', atividade.titulo || '')
+    .replaceAll('{data}', formatarData(atividade.data))
+    .replaceAll('{cargaHoraria}', cert.cargaHoraria || '');
+  
+  document.getElementById('certTexto').innerHTML = texto;
+  
+  if (cert.img) {
+    document.getElementById('certBg').src = cert.img;
+  } else {
+    document.getElementById('certBg').style.display = 'none';
+  }
+  
+  QRCode.toCanvas(
+    document.getElementById('qrcode'),
+    window.location.href,
+    {
+      width: 120,
+      margin: 1
+    }
+  );
 </script>
 
 </body>
