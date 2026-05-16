@@ -1555,6 +1555,24 @@
             Cadastrar Atividade
           </h3>
 
+          <div>
+            <label>Imagem de capa</label>
+          
+            <input
+              type="url"
+              id="atividadeCapa"
+              placeholder="https://site.com/imagem.jpg">
+          </div>
+          
+          <div>
+            <label>Fonte da imagem</label>
+          
+            <input
+              type="text"
+              id="atividadeCapaFonte"
+              placeholder="Foto: Fulano">
+          </div>
+
           <!-- Título -->
           <div>
             <label>Título</label>
@@ -3150,6 +3168,8 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
 
     window.publicarAtividade = async function() {
       const titulo    = document.getElementById('atividadeTitulo').value.trim();
+      const capa = document.getElementById('atividadeCapa').value.trim();
+      const capaFonte = document.getElementById('atividadeCapaFonte').value.trim();
       const descricao = document.getElementById('atividadeDescricao').value.trim();
       const corpo = document.getElementById('atividadeCorpo').innerHTML.trim();
       const data      = document.getElementById('atividadeData').value;
@@ -3179,6 +3199,8 @@ function rteEditRecuoPrimeiraLinha(i, aplicar) {
 
       await addDoc(colAtividades, {
         titulo,
+        capa,
+        capaFonte
         descricao,
         corpo,
         data,
