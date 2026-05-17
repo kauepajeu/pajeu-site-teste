@@ -416,9 +416,23 @@
     }
 
     function primeiraFoto(atividade) {
-      if (atividade.fotos && atividade.fotos.length) {
-        return atividade.fotos[0];
+    
+      // prioridade: capa
+      if (atividade.capa) {
+        return typeof atividade.capa === "string"
+          ? atividade.capa
+          : atividade.capa.url || "";
       }
+    
+      // fallback: primeira foto
+      if (atividade.fotos && atividade.fotos.length) {
+        const f = atividade.fotos[0];
+    
+        return typeof f === "string"
+          ? f
+          : f.url || "";
+      }
+    
       return "";
     }
 
