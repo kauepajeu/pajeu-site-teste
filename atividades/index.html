@@ -320,7 +320,21 @@
       }
       
       function primeiraFoto(atividade) {
-        return atividade.fotos && atividade.fotos.length ? atividade.fotos[0] : "";
+        if (atividade.capa) {
+          return typeof atividade.capa === "string"
+            ? atividade.capa
+            : atividade.capa.url || "";
+        }
+      
+        if (atividade.fotos && atividade.fotos.length) {
+          const f = atividade.fotos[0];
+      
+          return typeof f === "string"
+            ? f
+            : f.url || "";
+        }
+      
+        return "";
       }
       
       function textoBusca(atividade) {
@@ -406,95 +420,6 @@
       
       carregarAtividades();
 </script>
-
-  <script>
-    function formatarData(data) {
-      if (!data) return "";
-      const d = new Date(data + "T00:00:00");
-      if (isNaN(d)) return data;
-      return d.toLocaleDateString("pt-BR");
-    }
-
-    function primeiraFoto(atividade) {
-    
-      // prioridade: capa
-      if (atividade.capa) {
-        return typeof atividade.capa === "string"
-          ? atividade.capa
-          : atividade.capa.url || "";
-      }
-    
-      // fallback: primeira foto
-      if (atividade.fotos && atividade.fotos.length) {
-        const f = atividade.fotos[0];
-    
-        return typeof f === "string"
-          ? f
-          : f.url || "";
-      }
-    
-      return "";
-    }
-
-    function textoBusca(atividade) {
-      return [
-        atividade.titulo || "",
-        atividade.descricao || "",
-        atividade.data || "",
-        ...(atividade.certificados || []).flatMap(c => [
-          c.cargaHoraria || "",
-          c.texto || "",
-          ...(c.participantes || [])
-        ])
-      ].join(" ").toLowerCase();
-    }
-
-    function renderAtividades(lista) {
-      if (!lista.length) {
-        grid.innerHTML = `
-          <div class="vazio">
-            Nenhuma atividade encontrada.
-          </div>
-        `;
-        return;
-      }
-
-      grid.innerHTML = lista.map(a => {
-        const foto = primeiraFoto(a);
-
-        return `
-          <a class="card" href="atividade.html?id=${encodeURIComponent(a.firestoreId)}">
-            ${foto ? `<img src="${foto}" alt="Imagem da atividade" class="card-img">` : ""}
-
-            <div class="card-body">
-              <div class="data">${a.data ? formatarData(a.data) : "Atividade"}</div>
-              <h2>${a.titulo || "Atividade sem título"}</h2>
-              <p class="desc">${a.descricao || "Sem descrição cadastrada."}</p>
-              <span class="ver">Ver atividade →</span>
-            </div>
-          </a>
-        `;
-      }).join("");
-    }
-
-    function filtrarAtividades() {
-      const termo = busca.value.trim().toLowerCase();
-      const atividades = ls("pajeu_atividades", []);
-
-      const ordenadas = atividades.sort((a, b) => {
-        return new Date(b.criadoEm || b.data || 0) - new Date(a.criadoEm || a.data || 0);
-      });
-
-      if (!termo) {
-        renderAtividades(ordenadas);
-        return;
-      }
-
-      const filtradas = ordenadas.filter(a => textoBusca(a).includes(termo));
-      renderAtividades(filtradas);
-    }
-
-    filtrarAtividades();
-  </script>
+  
 </body>
 </html>
